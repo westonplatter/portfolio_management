@@ -1,0 +1,31 @@
+name: portfolio_management
+
+channels:
+    - default
+
+dependencies:
+    - python=3.7
+    - click
+    - sqlalchemy
+    - Flask
+    - Flask-SQLAlchemy
+    - pandas >= 1.0.0
+    - psycopg2
+    - numpy
+    - requests
+    - pytz
+    - matplotlib
+    # test resources
+    - pytest
+    - pip
+    - pip:
+        - ipdb
+        - loguru
+        - ib_insync
+        - trading_calendars
+        # graphql libs
+        - ariadne
+        - starlette
+        # dev resources
+        - black
+        # testing resources
