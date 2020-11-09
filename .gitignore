@@ -91,4 +91,5 @@ venv.bak/
 *.csv
 *.txt
 
-results/
+node_modules/
+static/dist/*
