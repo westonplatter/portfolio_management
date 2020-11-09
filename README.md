@@ -19,3 +19,7 @@ Therefore,
 ## License
 MIT. See license file.
 
+
+## Todos
+- figure out how to fetch data for the Trades page
+- add a search box to limit trades to a specific symbol/ticker
