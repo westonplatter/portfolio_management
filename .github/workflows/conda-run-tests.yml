@@ -21,13 +21,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      # - name: "Cache Conda"
-      #   uses: actions/cache@v1
-      #   with:
-      #     path: /usr/share/miniconda/envs/portfolio_manager
-      #     key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-conda-
+      - name: "Cache Conda"
+        uses: actions/cache@v1
+        with:
+          path: /usr/share/miniconda/envs/portfolio_management
+          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
       - name: "Setup Conda dependencies"
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -39,9 +39,8 @@ jobs:
       - name: Conda info
         shell: bash -l {0}
         run: |
-          # conda list
-          pip list
+          conda info
+          conda list
       - name: Run tests
         shell: bash -l {0}
-        run: |
-          pytest -s .
+        run: pytest .
