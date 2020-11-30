@@ -37,7 +37,8 @@ jobs:
       - name: Conda info
         shell: bash -l {0}
         run: |
-          conda list
+          # conda list
+          pip list
       - name: Run tests
         shell: bash -l {0}
         run: |
