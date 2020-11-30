@@ -33,14 +33,14 @@ jobs:
       - name: "Cache Conda"
         uses: actions/cache@v1
         with:
-          path: /usr/share/miniconda/envs/ta_scanner
+          path: /usr/share/miniconda/envs/portfolio_manager
           key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
           restore-keys: |
             ${{ runner.os }}-conda-
       - name: "Setup Conda dependencies"
         uses: goanpeca/setup-miniconda@v1
         with:
-          activate-environment: ta_scanner
+          activate-environment: portfolio_manager
           environment-file: environment.yml
           python-version: "${{ matrix.python-version }}"
           auto-activate-base: false
