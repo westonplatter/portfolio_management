@@ -33,7 +33,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-          activate-environment: portfolio_manager
+          activate-environment: portfolio_management
           environment-file: environment.yml
           auto-activate-base: false
       - name: Conda info
