@@ -26,6 +26,7 @@ dependencies:
         # graphql libs
         - ariadne
         - starlette
+        - python-dotenv
         # dev resources
         - black
         # testing resources

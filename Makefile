@@ -1,6 +1,6 @@
 CONDA_ENV ?= portfolio_management
 
-test:
+t:
 	@pytest -s .
 
 env.create:

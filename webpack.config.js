@@ -1,6 +1,6 @@
 module.exports = {
     entry: {
-        main: "./static/js/index.js",
+        main: "./api/static/js/index.js",
     },
     module: {
         rules: [
@@ -11,10 +11,9 @@ module.exports = {
             {
                 test: /\.(svg|png|jpg|jpeg|gif)$/,
                 loader: "file-loader",
-
                 options: {
                     name: "[name].[ext]",
-                    outputPath: "../../static/dist",
+                    outputPath: "../../api/static/dist",
                 },
             },
             {
@@ -43,7 +42,7 @@ module.exports = {
                         loader: 'sass-loader',
                         options: {
                             sassOptions: {
-                                indentedSyntax: true
+                                indentedSyntax: false
                             }
                         }
                     }
@@ -52,7 +51,7 @@ module.exports = {
         ]
     },
     output: {
-        path: __dirname + "/static/dist",
+        path: __dirname + "/api/static/dist",
         filename: "[name].bundle.js",
     },
 };
