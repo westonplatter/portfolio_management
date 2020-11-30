@@ -21,17 +21,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: "Cache Conda"
-        uses: actions/cache@v1
-        with:
-          path: /usr/share/miniconda/envs/portfolio_manager
-          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-conda-
+      # - name: "Cache Conda"
+      #   uses: actions/cache@v1
+      #   with:
+      #     path: /usr/share/miniconda/envs/portfolio_manager
+      #     key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-conda-
       - name: "Setup Conda dependencies"
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
+          activate-environment: portfolio_manager
       - name: Conda info
         shell: bash -l {0}
         run: |
