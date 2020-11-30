@@ -35,6 +35,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           activate-environment: portfolio_manager
           environment-file: environment.yml
+          auto-activate-base: false
       - name: Conda info
         shell: bash -l {0}
         run: |
