@@ -7,6 +7,7 @@ from ariadne import (
     QueryType,
 )
 from api.models import Trade
+from typing import List, Dict
 
 
 def resolve_create_trade(
@@ -74,7 +75,7 @@ def resolve_create_trade(
     return payload
 
 
-def resolve_trades(obj, info):
+def resolve_trades(obj, info, symbol: str = "") -> Dict:
     try:
         trades = [x.to_dict() for x in Trade.query.all()]
         payload = {"success": True, "trades": trades}

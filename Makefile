@@ -1,6 +1,9 @@
 CONDA_ENV ?= portfolio_management
 
-t:
+
+.PHONY: all test clean
+
+test:
 	@pytest -s .
 
 eslint:
@@ -11,4 +14,3 @@ env.create:
 
 env.update:
 	@conda env update -n ${CONDA_ENV} -f environment.yml
-

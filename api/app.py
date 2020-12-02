@@ -40,8 +40,9 @@ def register_routes(app) -> None:
         status_code = 200 if success else 400
         return jsonify(result), status_code
 
-    @app.route("/")
-    def cathall():
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def cathall(path):
         return render_template("index.html")
 
 

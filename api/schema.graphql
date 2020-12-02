@@ -41,7 +41,7 @@ type Trade {
 	fxPnl: Float,
 	mtmPnl: Float,
 	buySell: String
-	
+
 	# -- accountId
 	# acctAlias
 	# model,
@@ -141,7 +141,7 @@ type GroupsResult {
 }
 
 type Query  {
-	trades: TradesResult!,
+	trades(symbol: String): TradesResult!,
 	trade(tradeId: ID!): TradeResult,
 	groups: GroupsResult,
 }
@@ -154,8 +154,8 @@ type deleteTradeResult {
 type Mutation {
 	createTradeSimple(symbol: String!): TradeResult!
 	createTrade(
-		symbol: String!, 
-		tradeID: String!, 
+		symbol: String!,
+		tradeID: String!,
 		ibOrderID: String!,
 		ibExecID: String!,
 		transactionID: String!,
