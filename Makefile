@@ -1,6 +1,5 @@
 CONDA_ENV ?= portfolio_management
 
-
 .PHONY: all test clean
 
 test:

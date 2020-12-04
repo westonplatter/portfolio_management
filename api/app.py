@@ -47,4 +47,5 @@ def register_routes(app) -> None:
 
 
 # TODO(weston) rework this into factory pattern
+# TODO(weston) move this into migrations
 # db.create_all()
