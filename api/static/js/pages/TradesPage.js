@@ -10,20 +10,18 @@ const QUERY_TRADES = gql`
       trades {
         id,
         accountId,
-
-        transactionID,
-        tradeID,
-
+        assetCategory,
+        # transactionId,
+        # tradeId,
         symbol,
         underlyingSymbol,
-
-        conId,
-        securityID,
-        securityIDType,
-        underlyingConid,
-        underlyingSecurityID,
-        description,
-        strike
+        # conId,
+        # securityID,
+        # securityIDType,
+        # underlyingConId,
+        # underlyingSecurityId,
+        # description,
+        # strike
       }
     }
   }
@@ -76,8 +74,12 @@ const TradesPage = () => {
     () =>
       [
           {
-            Header: 'Id',
-            accessor: 'id',
+            Header: 'AccountId',
+            accessor: 'accountId',
+          },
+          {
+            Header: "AssetCategory",
+            accessor: 'assetCategory'
           },
           {
             Header: 'Underlying Symbol',

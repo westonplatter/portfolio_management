@@ -2,6 +2,9 @@ CONDA_ENV ?= portfolio_management
 
 .PHONY: all test clean
 
+run:
+	@python server.py
+
 test:
 	@pytest -s .
 
@@ -13,3 +16,8 @@ env.create:
 
 env.update:
 	@conda env update -n ${CONDA_ENV} -f environment.yml
+
+db.drop:
+	@psql \
+		-d portfolio_manager_dev \
+		-c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
