@@ -102,7 +102,8 @@ type TradeResult {
 type TradesResult {
 	success: Boolean!,
 	errors: [String!],
-	trades: [Trade!]!
+	trades: [Trade!]!,
+  totalCount: Int
 }
 
 type GroupResult {
@@ -118,7 +119,7 @@ type GroupsResult {
 }
 
 type Query  {
-	trades(symbol: String): TradesResult!,
+	trades(symbol: String, pageSize: Int, pageIndex: Int): TradesResult!,
 	trade(tradeId: ID!): TradeResult,
 	groups: GroupsResult,
 }

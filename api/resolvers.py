@@ -81,10 +81,12 @@ def resolve_create_trade(
   return payload
 
 
-def resolve_trades(obj, info, symbol: str = "") -> Dict:
+def resolve_trades(obj, info, symbol: str = "", pageSize: int = 100, pageIndex: int = 0) -> Dict:
   try:
-    trades = [x.to_dict() for x in Trade.query.limit(10).all()]
-    payload = {"success": True, "trades": trades}
+    trades = [x.to_dict() for x in Trade.query.limit(pageSize).all()]
+    total_count = Trade.query.count()
+    # logger(f"------------------------------ totalCount= {total_count}")
+    payload = {"success": True, "trades": trades, "totalCount": 100}
   except Exception as e:
     payload = {"success": False, "errors": [str(e)]}
   return payload
