@@ -1,27 +1,13 @@
+// external packages
 import React, { Component, useMemo, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { withApollo } from 'react-apollo';
 import { render } from 'react-dom';
+import AsyncSelect from 'react-select/async';
 
-
-const QUERY_TRADES = gql`
-  query($symbols: [String], $pageSize: Int, $pageIndex: Int)  {
-    trades(symbols: $symbols, pageSize: $pageSize, pageIndex: $pageIndex) {
-      success,
-      errors,
-      totalCount,
-      trades {
-        id,
-        accountId,
-        assetCategory,
-        symbol,
-        underlyingSymbol,
-        description,
-      }
-    }
-  }
-`;
+// internal packages
+import {QUERY_TRADES, QUERY_ACCOUNTS} from '../GraphQueries.js'
 
 
 class TradesPage extends React.Component {
@@ -32,11 +18,37 @@ class TradesPage extends React.Component {
 
     this.state = {
       symbols: [],
+      accountIds: [],
       data: [],
     }
 
     this.fetchTrades = this.fetchTrades.bind(this);
+    this.handleAsyncLoadAccounts = this.handleAsyncLoadAccounts.bind(this)
     this.formOnChangeSymbols = this.formOnChangeSymbols.bind(this);
+    this.formOnChangeAccounts = this.formOnChangeAccounts.bind(this)
+  }
+
+  handleAsyncLoadAccounts(inputValue) {
+    let graphqlQueryExpression = {
+      query: QUERY_ACCOUNTS
+    }
+
+    const transformDataIntoValueLabel = (data) => {
+      return data.accounts.accounts.map(ix => {
+        return { value: ix.accountId, label: ix.accountId }
+      })
+    }
+
+    return new Promise(resolve => {
+      this.client.query(graphqlQueryExpression).then(response => {
+        resolve(transformDataIntoValueLabel(response.data))
+      })
+    });
+  }
+
+  formOnChangeAccounts(inputs) {
+    let accountIds = inputs.map(x => x.value)
+    this.setState({accountIds: accountIds})
   }
 
   formOnChangeSymbols(event) {
@@ -50,11 +62,17 @@ class TradesPage extends React.Component {
       query: QUERY_TRADES,
       variables: {
         symbols: this.state.symbols,
+        accountIds: this.state.accountIds,
       }
     }
 
+    const formatResponse = (response) => {
+      let trades = response.data.trades.trades
+      return trades
+    }
+
     this.client.query(graphqlQueryExpression).then(response => {
-      this.setState({data: response.data.trades.trades})
+      this.setState({data: formatResponse(response)})
     })
   }
 
@@ -72,6 +90,17 @@ class TradesPage extends React.Component {
               <label>Symbols</label>
               <input className="form-control" onChange={this.formOnChangeSymbols} />
             </div>
+
+            <div className="form-group">
+              <div className="select-index-input" style={{width: 400, display: "inline-block"}}>
+                <AsyncSelect
+                  onChange={this.formOnChangeAccounts}
+                  isMulti={true}
+                  cacheOptions={true}
+                  defaultOptions={true}
+                  loadOptions={this.handleAsyncLoadAccounts} />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -84,7 +113,13 @@ class TradesPage extends React.Component {
           <thead>
             <tr>
               <th>Id</th>
+              <th>Date</th>
               <th>Symbol</th>
+              <th>Underlying Symbol</th>
+              <th>Open/Close</th>
+              <th>Proceeds</th>
+              <th>PnL</th>
+              <th>AccountId</th>
             </tr>
           </thead>
 
@@ -93,7 +128,13 @@ class TradesPage extends React.Component {
                 return (
                   <tr key={trade.id}>
                     <td>{trade.id}</td>
+                    <td>{trade.dateTime}</td>
                     <td>{trade.symbol}</td>
+                    <td>{trade.underlyingSymbol}</td>
+                    <td>{trade.openCloseIndicator}</td>
+                    <td>{trade.proceeds}</td>
+                    <td>{trade.fifoPnlRealized}</td>
+                    <td>{trade.accountId}</td>
                   </tr>
                 )
               })

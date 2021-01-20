@@ -20,8 +20,9 @@ def create_app(config_file_name: str = "api.settings") -> Flask:
 def register_extensions(app) -> None:
     db.init_app(app)
     import api.models
+
     with app.app_context():
-      db.create_all() # TODO use migrations
+        db.create_all()  # TODO use migrations
 
 
 def register_routes(app) -> None:

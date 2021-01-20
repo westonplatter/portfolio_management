@@ -3,6 +3,10 @@ schema {
 	mutation: Mutation
 }
 
+type Account {
+  accountId: String
+}
+
 type Group {
 	id: ID!,
 	name: String!
@@ -106,6 +110,13 @@ type TradesResult {
   totalCount: Int
 }
 
+type AccountsResult {
+  success: Boolean,
+  errors: [String!],
+  accounts: [Account!]!,
+  count: Int
+}
+
 type GroupResult {
 	success: Boolean!,
 	errors: [String!],
@@ -119,8 +130,9 @@ type GroupsResult {
 }
 
 type Query  {
-	trades(symbols: [String], pageSize: Int, pageIndex: Int): TradesResult!,
+	trades(symbols: [String], accountIds: [String], pageSize: Int, pageIndex: Int): TradesResult!,
 	trade(tradeId: ID!): TradeResult,
+  accounts: AccountsResult,
 	groups: GroupsResult,
 }
 
