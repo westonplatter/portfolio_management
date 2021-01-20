@@ -11,5 +11,4 @@ FLASK_APP = "server:app"
 DEBUG = 1 if app_env == "development" else 0
 
 SQLALCHEMY_DATABASE_URI = configs.get("SQLALCHEMY_DATABASE_URI")
-
 SQLALCHEMY_TRACK_MODIFICATIONS = configs.get("SQLALCHEMY_TRACK_MODIFICATIONS", 0)
