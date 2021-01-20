@@ -21,6 +21,9 @@ def register_extensions(app) -> None:
     db.init_app(app)
     import api.models
 
+    with app.app_context():
+        db.create_all()  # TODO use migrations
+
 
 def register_routes(app) -> None:
     @app.route("/favicon.ico")
@@ -44,8 +47,3 @@ def register_routes(app) -> None:
     @app.route("/<path:path>")
     def cathall(path):
         return render_template("index.html")
-
-
-# TODO(weston) rework this into factory pattern
-# TODO(weston) move this into migrations
-# db.create_all()

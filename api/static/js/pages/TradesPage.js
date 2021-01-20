@@ -1,120 +1,153 @@
-import React, { useMemo } from 'react';
+// external packages
+import React, { Component, useMemo, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { useTable } from "react-table";
+import { withApollo } from 'react-apollo';
+import { render } from 'react-dom';
+import AsyncSelect from 'react-select/async';
 
-const QUERY_TRADES = gql`
-  query($symbol: String)  {
-    trades(symbol: $symbol) {
-      success, errors
-      trades {
-        id,
-        accountId,
+// internal packages
+import {QUERY_TRADES, QUERY_ACCOUNTS} from '../GraphQueries.js'
 
-        transactionID,
-        tradeID,
 
-        symbol,
-        underlyingSymbol,
+class TradesPage extends React.Component {
+  constructor(props) {
+    super()
 
-        conId,
-        securityID,
-        securityIDType,
-        underlyingConid,
-        underlyingSecurityID,
-        description,
-        strike
+    this.client = props.client
+
+    this.state = {
+      symbols: [],
+      accountIds: [],
+      data: [],
+    }
+
+    this.fetchTrades = this.fetchTrades.bind(this);
+    this.handleAsyncLoadAccounts = this.handleAsyncLoadAccounts.bind(this)
+    this.formOnChangeSymbols = this.formOnChangeSymbols.bind(this);
+    this.formOnChangeAccounts = this.formOnChangeAccounts.bind(this)
+  }
+
+  handleAsyncLoadAccounts(inputValue) {
+    let graphqlQueryExpression = {
+      query: QUERY_ACCOUNTS
+    }
+
+    const transformDataIntoValueLabel = (data) => {
+      return data.accounts.accounts.map(ix => {
+        return { value: ix.accountId, label: ix.accountId }
+      })
+    }
+
+    return new Promise(resolve => {
+      this.client.query(graphqlQueryExpression).then(response => {
+        resolve(transformDataIntoValueLabel(response.data))
+      })
+    });
+  }
+
+  formOnChangeAccounts(inputs) {
+    let accountIds = inputs.map(x => x.value)
+    this.setState({accountIds: accountIds})
+  }
+
+  formOnChangeSymbols(event) {
+    let input = event.target.value;
+    let symbols = input.split(",")
+    this.setState({symbols: symbols})
+  }
+
+  fetchTrades() {
+    const graphqlQueryExpression = {
+      query: QUERY_TRADES,
+      variables: {
+        symbols: this.state.symbols,
+        accountIds: this.state.accountIds,
       }
     }
-  }
-`;
 
-
-function Table({columns, data}) {
-  // Use the state and functions returned from useTable to build your UI
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data
-  })
-
-  // Render the UI for your table
-  return (
-    <table className='table' {...getTableProps()}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
-          prepareRow(row)
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-              })}
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
-  )
-}
-
-const TradesPage = () => {
-  const columns = React.useMemo(
-    () =>
-      [
-          {
-            Header: 'Id',
-            accessor: 'id',
-          },
-          {
-            Header: 'Underlying Symbol',
-            accessor: 'underlyingSymbol',
-          },
-          {
-            Header: 'Symbol',
-            accessor: 'symbol',
-          },
-        ],
-    []
-  )
-
-  const { loading, error, data } = useQuery(QUERY_TRADES, {
-    variables: {
-      symbol: "",
+    const formatResponse = (response) => {
+      let trades = response.data.trades.trades
+      return trades
     }
-  })
 
-  if (loading) return <p>Loading ...</p>;
-  if (error) return <p>Error ...</p>;
+    this.client.query(graphqlQueryExpression).then(response => {
+      this.setState({data: formatResponse(response)})
+    })
+  }
 
-  return (
-    <>
-      <div className="row">
-        <div className="col-md-12">
-          <h1>Trades</h1>
+  render() {
+    return (
+      <div>
+        <h1 className="mt-5">Trades</h1>
+
+        <hr/>
+        <h4>Filters</h4>
+
+        <div className="row">
+          <div className="col-md-4">
+            <div className="form-group">
+              <label>Symbols</label>
+              <input className="form-control" onChange={this.formOnChangeSymbols} />
+            </div>
+
+            <div className="form-group">
+              <div className="select-index-input" style={{width: 400, display: "inline-block"}}>
+                <AsyncSelect
+                  onChange={this.formOnChangeAccounts}
+                  isMulti={true}
+                  cacheOptions={true}
+                  defaultOptions={true}
+                  loadOptions={this.handleAsyncLoadAccounts} />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="row" style={{marginTop: 10}}>
-        <div className="col-md-12">
-          <Table columns={columns} data={data.trades.trades} />
-        </div>
+        <button onClick={this.fetchTrades}>Search</button>
+
+        <br/>
+        <br/>
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Date</th>
+              <th>Symbol</th>
+              <th>Underlying Symbol</th>
+              <th>Open/Close</th>
+              <th>Proceeds</th>
+              <th>PnL</th>
+              <th>AccountId</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {this.state.data.map(trade => {
+                return (
+                  <tr key={trade.id}>
+                    <td>{trade.id}</td>
+                    <td>{trade.dateTime}</td>
+                    <td>{trade.symbol}</td>
+                    <td>{trade.underlyingSymbol}</td>
+                    <td>{trade.openCloseIndicator}</td>
+                    <td>{trade.proceeds}</td>
+                    <td>{trade.fifoPnlRealized}</td>
+                    <td>{trade.accountId}</td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </table>
+
       </div>
-    </>
-  )
+    )
+  }
 };
 
-export default TradesPage;
+
+const FinalTradesPage = withApollo(TradesPage)
+
+export default FinalTradesPage;

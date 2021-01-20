@@ -3,6 +3,10 @@ schema {
 	mutation: Mutation
 }
 
+type Account {
+  accountId: String
+}
+
 type Group {
 	id: ID!,
 	name: String!
@@ -17,95 +21,63 @@ type GroupTrade {
 type Trade {
 	id: ID!,
   accountId: String,
-  tradeID: String,
-  transactionID: String,
-
-	symbol: String!,
-  underlyingSymbol: String,
+  assetCategory: String,
+  buySell: String
+  closePrice: Float,
   conId: String,
+  dateTime: String,
+  description: String,
+  expiry: String,
+  fifoPnlRealized: Float,
+	fxPnl: Float,
+  ibCommission: Float,
+  ibExecId: String,
+  ibOrderId: String,
+  multiplier: Int,
+  netCash: Float,
+  mtmPnl: Float,
+  openCloseIndicator: String,
+	proceeds: Float,
+  putCall: String,
+  quantity: Float,
   securityID: String,
 	securityIDType: String,
-  underlyingConid: String,
-  underlyingSecurityID: String,
-
+  strike: String,
+  symbol: String!,
+  tradeDate: String,
+  tradeId: String,
+  tradePrice: Float,
+  transactionId: String,
   transactionType: String,
+  underlyingConId: String,
+  underlyingSecurityId: String,
+  underlyingSymbol: String,
+  # TODO(weston) alphabetize below
 
-	ibOrderID: String,
-	ibExecID: String,
-	description: String,
-	multiplier: Int,
-	strike: String,
-	expiry: String,
-	putCall: String,
-	dateTime: String,
-	tradeDate: String,
-	quantity: Float,
-	tradePrice: Float,
-	proceeds: Float,
-	ibCommission: Float,
-	netCash: Float,
-	closePrice: Float,
-	openCloseIndicator: String,
-	fifoPnlRealized: Float,
-	fxPnl: Float,
-	mtmPnl: Float,
-	buySell: String
-
-	# -- accountId
 	# acctAlias
 	# model,
 	# currency,
 	# fxRateToBase,
-	# assetCategory,
-	# -- symbol,
-	# -- description,
-	# -- conid,
-	# -- securityID,
-	# -- securityIDType,
 	# cusip,
 	# isin,
 	# listingExchange,
-	# -- underlyingConid,
-	# -- underlyingSymbol,
-	# -- underlyingSecurityID,
 	# underlyingListingExchange,
 	# issuer,
-	# -- multiplier,
-	# -- strike,
-	# -- expiry,
-	# -- tradeID,
-	# -- putCall,
 	# reportDate,
 	# principalAdjustFactor,
-	# -- dateTime,
-	# -- tradeDate,
 	# settleDateTarget,
 	# transactionType,
 	# exchange,
-	# -- quantity,
-	# -- tradePrice,
 	# tradeMoney,
-	# -- proceeds,
 	# taxes,
-	# -- ibCommission,
 	# ibCommissionCurrency,
-	# -- netCash,
-	# -- closePrice,
-	# -- openCloseIndicator,
 	# notes,
 	# cost,
-	# -- fifoPnlRealized,
-	# -- fxPnl,
-	# -- mtmPnl,
 	# origTradePrice,
 	# origTradeDate,
 	# origTradeID,
 	# origOrderID,
 	# clearingFirmID,
-	# -- transactionID,
-	# -- buySell,
-	# -- ibOrderID,
-	# -- ibExecID,
 	# brokerageOrderID,
 	# orderReference,
 	# volatilityOrderLink,
@@ -127,14 +99,22 @@ type Trade {
 
 type TradeResult {
 	success: Boolean!,
-	errors: [String!],
-	trade: Trade!
+	errors: [String],
+	trade: Trade
 }
 
 type TradesResult {
 	success: Boolean!,
 	errors: [String!],
-	trades: [Trade!]
+	trades: [Trade!]!,
+  totalCount: Int
+}
+
+type AccountsResult {
+  success: Boolean,
+  errors: [String!],
+  accounts: [Account!]!,
+  count: Int
 }
 
 type GroupResult {
@@ -150,8 +130,9 @@ type GroupsResult {
 }
 
 type Query  {
-	trades(symbol: String): TradesResult!,
+	trades(symbols: [String], accountIds: [String], pageSize: Int, pageIndex: Int): TradesResult!,
 	trade(tradeId: ID!): TradeResult,
+  accounts: AccountsResult,
 	groups: GroupsResult,
 }
 
@@ -163,32 +144,34 @@ type deleteTradeResult {
 type Mutation {
 	createTradeSimple(symbol: String!): TradeResult!
 	createTrade(
-		symbol: String!,
-		tradeID: String!,
-		ibOrderID: String!,
-		ibExecID: String!,
-		transactionID: String!,
-		accountId: String!,
-		underlyingSymbol: String!,
-		description: String!,
-		multiplier: Int!,
-		strike: String!,
-		expiry: String!,
-		putCall: String!,
-		dateTime: String!,
-		tradeDate: String!,
-		quantity: Float!,
-		tradePrice: Float!,
-		proceeds: Float!,
-		ibCommission: Float!,
-		netCash: Float!,
-		closePrice: Float!,
-		openCloseIndicator: String!,
-		fifoPnlRealized: Float!,
-		fxPnl: Float!,
-		mtmPnl: Float!,
-		buySell: String!
-	): TradeResult!
+    accountId: String,
+    assetCategory: String,
+    buySell: String
+    closePrice: Float,
+    conId: String,
+    dateTime: String,
+    description: String,
+    expiry: String,
+    fifoPnlRealized: Float,
+		fxPnl: Float,
+    ibCommission: Float,
+    ibExecId: String,
+    ibOrderId: String,
+    mtmPnl: Float,
+    multiplier: Int,
+    netCash: Float,
+    openCloseIndicator: String,
+    proceeds: Float,
+    putCall: String,
+    quantity: Float,
+		symbol: String,
+    strike: String,
+    tradeDate: String,
+		tradeId: String,
+    tradePrice: Float,
+    transactionId: String,
+		underlyingSymbol: String,
+	): TradeResult
 
 	deleteTrade(tradeId: ID!): deleteTradeResult!
 	createGroup(name: String!): GroupResult!,
