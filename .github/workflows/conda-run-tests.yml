@@ -16,12 +16,11 @@ jobs:
         python-version: ["3.7"]
     services:
       postgres:
-        image: postgres:13.1
+        image: postgres:13-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: mypassword
           POSTGRES_DB: portfolio_manager_test
-          PORTGRES_PORT: ${{ job.services.postgres.ports[5432] }}.
 
         # options: >-
         #   --health-cmd pg_isready
@@ -53,4 +52,7 @@ jobs:
           conda list
       - name: Run tests
         shell: bash -l {0}
-        run: ENV=test pytest .
+        run: pytest .
+        env:
+          ENV: test
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
