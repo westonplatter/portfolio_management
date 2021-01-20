@@ -10,7 +10,7 @@ FLASK_ENV = app_env
 FLASK_APP = "server:app"
 DEBUG = 1 if app_env == "development" else 0
 
-port = environ.get("POSTGRES_PORT", "5432")
+port = environ.get("POSTGRES_PORT")
 
 print("--------------------")
 print(f"port = {port}")
