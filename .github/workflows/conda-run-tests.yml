@@ -19,8 +19,10 @@ jobs:
         image: postgres:13.1
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: mypassword
           POSTGRES_DB: portfolio_manager_test
+          PORTGRES_PORT: ${{ job.services.postgres.ports[5432] }}.
+
         # options: >-
         #   --health-cmd pg_isready
         #   --health-interval 10s
