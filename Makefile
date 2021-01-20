@@ -2,8 +2,11 @@ CONDA_ENV ?= portfolio_management
 
 .PHONY: all test clean
 
-run:
+run.be:
 	@python server.py
+
+run.fe:
+	@yarn run start
 
 test:
 	@pytest -s .

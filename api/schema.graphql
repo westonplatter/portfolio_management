@@ -119,7 +119,7 @@ type GroupsResult {
 }
 
 type Query  {
-	trades(symbol: String, pageSize: Int, pageIndex: Int): TradesResult!,
+	trades(symbols: [String], pageSize: Int, pageIndex: Int): TradesResult!,
 	trade(tradeId: ID!): TradeResult,
 	groups: GroupsResult,
 }
