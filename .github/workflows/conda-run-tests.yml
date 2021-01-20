@@ -20,7 +20,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: ""
-          POSTGRES_DB: portfolio_manager_dev
+          POSTGRES_DB: portfolio_manager_test
         # options: >-
         #   --health-cmd pg_isready
         #   --health-interval 10s
@@ -51,4 +51,4 @@ jobs:
           conda list
       - name: Run tests
         shell: bash -l {0}
-        run: pytest .
+        run: ENV=test pytest .

@@ -9,7 +9,7 @@ run.fe:
 	@yarn run start
 
 test:
-	@pytest -s .
+	ENV=test pytest -s .
 
 eslint:
 	yarn run eslint api/static/js
