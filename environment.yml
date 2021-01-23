@@ -19,6 +19,7 @@ dependencies:
     - pytest
     - pip
     - pip:
+        - Flask-Migrate
         - ipdb
         - loguru
         - ib_insync

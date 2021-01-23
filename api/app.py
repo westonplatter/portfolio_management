@@ -5,7 +5,7 @@ import os
 from typing import List, Dict
 
 # internal imports
-from api.extensions import db
+from api.extensions import db, migrate
 from api.resolvers import schema
 
 
@@ -19,10 +19,8 @@ def create_app(config_file_name: str = "api.settings") -> Flask:
 
 def register_extensions(app) -> None:
     db.init_app(app)
+    migrate.init_app(app, db)
     import api.models
-
-    with app.app_context():
-        db.create_all()  # TODO use migrations
 
 
 def register_routes(app) -> None:

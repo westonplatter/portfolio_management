@@ -64,6 +64,7 @@ def resolve_create_trade(
     fxPnl=None,
     mtmPnl=None,
     buySell=None,
+    notes: str = None,
 ):
     try:
         trade = Trade(
@@ -94,6 +95,7 @@ def resolve_create_trade(
             fxPnl=fxPnl,
             mtmPnl=mtmPnl,
             buySell=buySell,
+            notes=notes,
         )
         db.session.add(trade)
         db.session.commit()
@@ -107,17 +109,26 @@ def resolve_trades(
     obj,
     info,
     symbols: List[str] = [],
+    underlyingSymbols: List[str] = [],
     accountIds: List[str] = [],
+    openClose: str = "C",
     pageSize: int = 100,
     pageIndex: int = 0,
 ) -> Dict:
     try:
-        query = Trade.query
+        query = Trade.query.filter(Trade.id > 0)
 
         # apply filters
-        if symbols != []:
-          query = query.filter(Trade.underlyingSymbol.in_(symbols))
-        if accountIds != []:
+        if openClose:
+          query = query.filter(Trade.openCloseIndicator == openClose)
+
+        if len(symbols) > 0:
+          query = query.filter(Trade.symbols.in_(symbols))
+
+        if len(underlyingSymbols) > 0:
+          query = query.filter(Trade.underlyingSymbol.in_(underlyingSymbols))
+
+        if len(accountIds) > 0:
           query = query.filter(Trade.accountId.in_(accountIds))
 
         # apply orderings
@@ -127,9 +138,9 @@ def resolve_trades(
         trades = query.limit(pageSize).all()
 
         trades = [x.to_dict() for x in trades]
-
         total_count = Trade.query.count()
-        payload = {"success": True, "trades": trades, "totalCount": 100}
+        payload = {"success": True, "trades": trades, "totalCount": total_count}
+
     except Exception as e:
         payload = {"success": False, "errors": [str(e)]}
     return payload

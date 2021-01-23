@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 const QUERY_TRADES = gql`
-  query($symbols: [String], $accountIds: [String], $pageSize: Int, $pageIndex: Int)  {
-    trades(symbols: $symbols, accountIds: $accountIds, pageSize: $pageSize, pageIndex: $pageIndex) {
+  query($symbols: [String], $underlyingSymbols: [String], $accountIds: [String], $openClose: String, $pageSize: Int, $pageIndex: Int)  {
+    trades(symbols: $symbols, underlyingSymbols: $underlyingSymbols, accountIds: $accountIds, openClose: $openClose, pageSize: $pageSize, pageIndex: $pageIndex) {
       success
       errors
       totalCount
@@ -23,6 +23,7 @@ const QUERY_TRADES = gql`
         putCall
         quantity
         strike
+        notes
       }
     }
   }

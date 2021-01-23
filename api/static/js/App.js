@@ -33,7 +33,7 @@ const App = () => (
       </nav>
     </header>
 
-    <main role="main" className="container">
+    <main role="main" className="container-fluid">
       <Route exact path="/" component={HomePage} />
       <Route path="/trades" component={TradesPage} />
     </main>

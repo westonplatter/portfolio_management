@@ -5,8 +5,12 @@ from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
 class Trade(db.Model):
     __tablename__ = "trades"
+    __table_args__ = (
+        db.UniqueConstraint("transactionId", name="unique_transaction_id"),
+    )
+    # primary key
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # in alphabetical order
+    # fields
     accountAlias = db.Column(db.String)
     accountId = db.Column(db.String)
     assetCategory = db.Column(db.String)
@@ -35,6 +39,7 @@ class Trade(db.Model):
     tradePrice = db.Column(db.Float)
     transactionId = db.Column(db.String)
     underlyingSymbol = db.Column(db.String)
+    notes = db.Column(db.String)
 
     def to_dict(self):
         return PydanticTrade.from_orm(self)

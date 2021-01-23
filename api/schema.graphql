@@ -35,6 +35,7 @@ type Trade {
   ibOrderId: String,
   multiplier: Int,
   netCash: Float,
+  notes: String,
   mtmPnl: Float,
   openCloseIndicator: String,
 	proceeds: Float,
@@ -52,49 +53,6 @@ type Trade {
   underlyingConId: String,
   underlyingSecurityId: String,
   underlyingSymbol: String,
-  # TODO(weston) alphabetize below
-
-	# acctAlias
-	# model,
-	# currency,
-	# fxRateToBase,
-	# cusip,
-	# isin,
-	# listingExchange,
-	# underlyingListingExchange,
-	# issuer,
-	# reportDate,
-	# principalAdjustFactor,
-	# settleDateTarget,
-	# transactionType,
-	# exchange,
-	# tradeMoney,
-	# taxes,
-	# ibCommissionCurrency,
-	# notes,
-	# cost,
-	# origTradePrice,
-	# origTradeDate,
-	# origTradeID,
-	# origOrderID,
-	# clearingFirmID,
-	# brokerageOrderID,
-	# orderReference,
-	# volatilityOrderLink,
-	# exchOrderId,
-	# extExecID,
-	# orderTime,
-	# openDateTime,
-	# holdingPeriodDateTime,
-	# whenRealized,
-	# whenReopened,
-	# levelOfDetail,
-	# changeInPrice,
-	# changeInQuantity,
-	# orderType,
-	# traderID,
-	# isAPIOrder,
-	# accruedInt
 }
 
 type TradeResult {
@@ -130,7 +88,7 @@ type GroupsResult {
 }
 
 type Query  {
-	trades(symbols: [String], accountIds: [String], pageSize: Int, pageIndex: Int): TradesResult!,
+	trades(symbols: [String], underlyingSymbols: [String], accountIds: [String], openClose: String, pageSize: Int, pageIndex: Int): TradesResult!,
 	trade(tradeId: ID!): TradeResult,
   accounts: AccountsResult,
 	groups: GroupsResult,
@@ -171,6 +129,7 @@ type Mutation {
     tradePrice: Float,
     transactionId: String,
 		underlyingSymbol: String,
+    notes: String,
 	): TradeResult
 
 	deleteTrade(tradeId: ID!): deleteTradeResult!
