@@ -4,9 +4,10 @@
   "main": "index.js",
   "repository": "git@github.com:westonplatter/portfolio_management.git",
   "author": "Weston Platter <westonplatter@gmail.com>",
-  "license": "MIT",
+  "license": "BSD-3",
   "scripts": {
-    "start": "webpack --mode development --watch"
+    "start": "webpack --mode development --watch",
+    "compile:production": "webpack --mode production"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",
@@ -24,6 +25,8 @@
     "@visx/tooltip": "^1.1.0",
     "apollo-boost": "^0.4.7",
     "autoprefixer": "^10.0.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "bootstrap": "^4.5.3",
     "core-js": "^3.7.0",
     "graphql": "^14.5.8",
@@ -39,10 +42,12 @@
     "react-select": "^3.2.0",
     "regenerator-runtime": "^0.13.7",
     "sass": "^1.29.0",
+    "source-map-loader": "^2.0.1",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.5",

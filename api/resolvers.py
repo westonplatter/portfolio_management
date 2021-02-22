@@ -66,43 +66,57 @@ def resolve_create_trade(
     buySell=None,
     notes: str = None,
 ):
-    try:
-        trade = Trade(
-            assetCategory=assetCategory,
-            conId=conId,
-            symbol=symbol,
-            tradeId=tradeId,
-            ibOrderId=ibOrderId,
-            ibExecId=ibExecId,
-            transactionId=transactionId,
-            accountId=accountId,
-            underlyingSymbol=underlyingSymbol,
-            description=description,
-            multiplier=multiplier,
-            strike=strike,
-            expiry=expiry,
-            putCall=putCall,
-            dateTime=dateTime,
-            tradeDate=tradeDate,
-            quantity=quantity,
-            tradePrice=tradePrice,
-            proceeds=proceeds,
-            ibCommission=ibCommission,
-            netCash=netCash,
-            closePrice=closePrice,
-            openCloseIndicator=openCloseIndicator,
-            fifoPnlRealized=fifoPnlRealized,
-            fxPnl=fxPnl,
-            mtmPnl=mtmPnl,
-            buySell=buySell,
-            notes=notes,
-        )
-        db.session.add(trade)
-        db.session.commit()
-        payload = {"success": True, "trade": trade.to_dict()}
-    except Exception as e:
-        payload = {"success": False, "errors": [str(e)]}
-    return payload
+  try:
+    data = dict(
+      assetCategory=assetCategory,
+      conId=conId,
+      symbol=symbol,
+      tradeId=tradeId,
+      ibOrderId=ibOrderId,
+      ibExecId=ibExecId,
+      transactionId=transactionId,
+      accountId=accountId,
+      underlyingSymbol=underlyingSymbol,
+      description=description,
+      multiplier=multiplier,
+      strike=strike,
+      expiry=expiry,
+      putCall=putCall,
+      dateTime=dateTime,
+      tradeDate=tradeDate,
+      quantity=quantity,
+      tradePrice=tradePrice,
+      proceeds=proceeds,
+      ibCommission=ibCommission,
+      netCash=netCash,
+      closePrice=closePrice,
+      openCloseIndicator=openCloseIndicator,
+      fifoPnlRealized=fifoPnlRealized,
+      fxPnl=fxPnl,
+      mtmPnl=mtmPnl,
+      buySell=buySell,
+      notes=notes,
+    )
+
+    def transform(data):
+        # from nan values if present
+        data['putCall'] = None if data['putCall'] == 'nan' else data['putCall']
+        data['expiry'] = None if data['expiry'] == 'nan' else data['expiry']
+        data['strike'] = None if data['strike'] == 'nan' else data['strike']
+        data['notes'] = None if data['notes'] == 'nan' else data['notes']
+        # underlyingSymbol
+        data['underlyingSymbol'] = data['symbol'] if data['underlyingSymbol'] == 'nan' else data['underlyingSymbol']
+        return data
+
+    data = transform(data)
+
+    trade = Trade(**data)
+    db.session.add(trade)
+    db.session.commit()
+    payload = {"success": True, "trade": trade.to_dict()}
+  except Exception as e:
+    payload = {"success": False, "errors": [str(e)]}
+  return payload
 
 
 def resolve_trades(
@@ -120,16 +134,13 @@ def resolve_trades(
 
         # apply filters
         if openClose:
-          query = query.filter(Trade.openCloseIndicator == openClose)
-
-        if len(symbols) > 0:
-          query = query.filter(Trade.symbols.in_(symbols))
+            query = query.filter(Trade.openCloseIndicator == openClose)
 
         if len(underlyingSymbols) > 0:
-          query = query.filter(Trade.underlyingSymbol.in_(underlyingSymbols))
+            query = query.filter(Trade.underlyingSymbol.in_([x.upper() for x in underlyingSymbols]))
 
         if len(accountIds) > 0:
-          query = query.filter(Trade.accountId.in_(accountIds))
+            query = query.filter(Trade.accountId.in_(accountIds))
 
         # apply orderings
         query = query.order_by(Trade.dateTime.desc())

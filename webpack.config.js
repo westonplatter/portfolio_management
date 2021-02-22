@@ -5,8 +5,11 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                use: "babel-loader",
+                test: /.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
+                }
             },
             {
                 test: /\.(svg|png|jpg|jpeg|gif)$/,
@@ -55,4 +58,6 @@ module.exports = {
         path: __dirname + "/api/static/dist",
         filename: "[name].bundle.js",
     },
+
+    devtool: "source-map"
 };

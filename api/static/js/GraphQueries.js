@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 const QUERY_TRADES = gql`
-  query($symbols: [String], $underlyingSymbols: [String], $accountIds: [String], $openClose: String, $pageSize: Int, $pageIndex: Int)  {
-    trades(symbols: $symbols, underlyingSymbols: $underlyingSymbols, accountIds: $accountIds, openClose: $openClose, pageSize: $pageSize, pageIndex: $pageIndex) {
+  query($underlyingSymbols: [String], $accountIds: [String], $openClose: String, $pageSize: Int, $pageIndex: Int)  {
+    trades(underlyingSymbols: $underlyingSymbols, accountIds: $accountIds, openClose: $openClose, pageSize: $pageSize, pageIndex: $pageIndex) {
       success
       errors
       totalCount
