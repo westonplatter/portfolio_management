@@ -8,7 +8,10 @@ import environ
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # portfolio_management/
 APPS_DIR = ROOT_DIR / "portfolio_management"
+
 env = environ.Env()
+env.read_env(env.str('ENV_PATH', '.env'))
+
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
@@ -42,7 +45,7 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///portfolio_management")
+    "default": env.db("DATABASE_URL", default="postgres:///pm_django")
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
@@ -79,7 +82,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "portfolio_management.users.apps.UsersConfig",
-    # Your stuff: custom apps go here
+    "ibkr",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
