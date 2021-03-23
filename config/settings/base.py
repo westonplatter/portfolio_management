@@ -83,6 +83,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "portfolio_management.users.apps.UsersConfig",
     "ibkr",
+    "ingest",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
