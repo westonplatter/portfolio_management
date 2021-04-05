@@ -35,5 +35,5 @@ if [ -z "$VIRTUAL_ENV" ]; then
 else
 
     pip install -r $PROJECT_DIR/requirements/local.txt
-    
+
 fi

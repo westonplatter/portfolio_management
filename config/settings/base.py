@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = ROOT_DIR / "portfolio_management"
 
 env = environ.Env()
-env.read_env(env.str('ENV_PATH', '.env'))
+env.read_env(env.str("ENV_PATH", ".env"))
 
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -44,9 +44,7 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///pm_django")
-}
+DATABASES = {"default": env.db("DATABASE_URL", default="postgres:///pm_django")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
@@ -78,6 +76,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
+    "graphene_django",
 ]
 
 LOCAL_APPS = [
@@ -312,3 +311,6 @@ REST_FRAMEWORK = {
 CORS_URLS_REGEX = r"^/api/.*$"
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+GRAPHENE = {"SCHEMA": "ingest.schema.schema"}  # Where your Graphene schema lives

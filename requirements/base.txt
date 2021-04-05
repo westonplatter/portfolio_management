@@ -22,3 +22,6 @@ django-cors-headers==3.7.0 # https://github.com/adamchainz/django-cors-headers
 
 # added
 graphene_django==2.15.0
+python_graphql_client==0.4.3
+pandas
+pydantic

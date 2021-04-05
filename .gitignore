@@ -272,3 +272,4 @@ portfolio_management/media/
 .pytest_cache/
 
 .env
+data
