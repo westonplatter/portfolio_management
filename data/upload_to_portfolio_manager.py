@@ -1,5 +1,6 @@
 import re
 import glob
+from typing import Optional
 
 from python_graphql_client import GraphqlClient
 from pydantic import BaseModel
@@ -15,10 +16,6 @@ class Mutation(BaseModel):
     def execute(self, client):
         query = self.gen_mutation()
         variables = self.gen_variables()
-
-        # print(f"query = {query}")
-        # print(f"variables = {variables}")
-
         return client.execute(query=query, variables=variables)
 
     def gen_variables(self):
@@ -31,23 +28,23 @@ class Query(BaseModel):
 
 class CreateTradeMutation(Mutation):
     transactionId: int
+    executedAt: str
 
-    # tradeId: str
-    # accountId: str
-    # assetCategory: str
+    tradeId: Optional[int]
+    accountId: str
+    assetCategory: str
     # conId: str
-    # description: str
+    description: str
     # ibOrderId: str
     # ibExecId: str
-    # symbol: str
+    symbol: str
     # tradeId: str
-    # underlyingSymbol: str
-    # #
-    # multiplier: int
-    # strike: str
-    # expiry: str
+    underlyingSymbol: str
+    #
+    multiplier: Optional[float]
+    strike: Optional[float]
+    expiry: Optional[str]
     # putCall: str
-    # dateTime: str
     # tradeDate: str
     # quantity: float
     # tradePrice: float
@@ -55,17 +52,51 @@ class CreateTradeMutation(Mutation):
     # ibCommission: float
     # netCash: float
     # closePrice: float
-    # openCloseIndicator: str
-    # fifoPnlRealized: float
-    # fxPnl: float
-    # mtmPnl: float
-    # buySell: str
+    openCloseIndicator: str
+    fifoPnlRealized: float
+    fxPnl: float
+    mtmPnl: float
+    buySell: str
     # notes: str
 
     def gen_mutation(self):
         return """
-            mutation x($transactionId: BigInt!) {
-                createOrGetTrade(transactionId: $transactionId) {
+            mutation x(
+                $transactionId: BigInt!,
+                $executedAt: DateTime!,
+                $tradeId: BigInt,
+                $accountId: String,
+                $assetCategory: String,
+                $symbol: String,
+                $underlyingSymbol: String,
+                $openCloseIndicator: String,
+                $fifoPnlRealized: Float,
+                $fxPnl: Float,
+                $mtmPnl: Float,
+                $buySell: String,
+                $description: String,
+                $expiry: DateTime,
+                $strike: Float,
+                $multiplier: Float,
+            ) {
+                createOrGetTrade(
+                    transactionId: $transactionId,
+                    executedAt: $executedAt,
+                    tradeId: $tradeId,
+                    accountId: $accountId,
+                    assetCategory: $assetCategory,
+                    symbol: $symbol,
+                    underlyingSymbol: $underlyingSymbol,
+                    openCloseIndicator: $openCloseIndicator,
+                    fifoPnlRealized: $fifoPnlRealized,
+                    fxPnl: $fxPnl,
+                    mtmPnl: $mtmPnl,
+                    buySell: $buySell,
+                    description: $description,
+                    expiry: $expiry,
+                    strike: $strike,
+                    multiplier: $multiplier,
+                ) {
                     trade {
                         transactionId
                     }
@@ -73,78 +104,8 @@ class CreateTradeMutation(Mutation):
             }
         """
 
-    # def gen_mutation(self):
-    #     return """
-    #         mutation (
-    #             $assetCategory: String,
-    #             $conId: String,
-    #             $symbol: String,
-    #             $tradeId: String,
-    #             $ibOrderId: String,
-    #             $ibExecId: String,
-    #             $transactionId: String,
-    #             $accountId: String,
-    #             $underlyingSymbol: String,
-    #             $description: String,
-    #             $multiplier: Int,
-    #             $strike: String,
-    #             $expiry: String,
-    #             $putCall: String,
-    #             $dateTime: String,
-    #             $tradeDate: String,
-    #             $quantity: Float,
-    #             $tradePrice: Float,
-    #             $proceeds: Float,
-    #             $ibCommission: Float,
-    #             $netCash: Float,
-    #             $closePrice: Float,
-    #             $openCloseIndicator: String,
-    #             $fifoPnlRealized: Float,
-    #             $fxPnl: Float,
-    #             $mtmPnl: Float,
-    #             $buySell: String,
-    #             $notes: String,
-    #         )
-    #             {
-    #                 createTrade(
-    #                     assetCategory: $assetCategory,
-    #                     conId: $conId,
-    #                     symbol: $symbol,
-    #                     tradeId: $tradeId,
-    #                     ibOrderId: $ibOrderId,
-    #                     ibExecId: $ibExecId,
-    #                     transactionId: $transactionId,
-    #                     accountId: $accountId,
-    #                     underlyingSymbol: $underlyingSymbol,
-    #                     description: $description,
-    #                     multiplier: $multiplier,
-    #                     strike: $strike,
-    #                     expiry: $expiry,
-    #                     putCall: $putCall,
-    #                     dateTime: $dateTime,
-    #                     tradeDate: $tradeDate,
-    #                     quantity: $quantity,
-    #                     tradePrice: $tradePrice,
-    #                     proceeds: $proceeds,
-    #                     ibCommission: $ibCommission,
-    #                     netCash: $netCash,
-    #                     closePrice: $closePrice,
-    #                     openCloseIndicator: $openCloseIndicator,
-    #                     fifoPnlRealized: $fifoPnlRealized,
-    #                     fxPnl: $fxPnl,
-    #                     mtmPnl: $mtmPnl,
-    #                     buySell: $buySell,
-    #                     notes: $notes
-    #                 ) {
-    #                     trade {
-    #                         id
-    #                     }
-    #                 }
-    #             }
-    #     """
 
-
-def rename_columns(ddf):
+def rename_columns(ddf) -> pd.DataFrame:
     return ddf.rename(
         columns={
             "tradeID": "tradeId",
@@ -152,12 +113,22 @@ def rename_columns(ddf):
             "ibOrderID": "ibOrderId",
             "transactionID": "transactionId",
             "conid": "conId",
+            "dateTime": "executedAt"
         }
     )
 
 
-def transform(ddf):
-    return ddf
+def transform(df) -> pd.DataFrame:
+    df.executedAt = pd.to_datetime(df['executedAt']).dt.strftime('%Y-%m-%dT%H:%M%:%SZ')
+
+    df.expiry = pd.to_datetime(df['expiry']).dt.strftime('%Y-%m-%dT%H:%M%:%SZ')
+    df.expiry = df.expiry.replace({np.nan: None})
+
+    df.strike = df.strike.replace({np.nan: None})
+
+    df.tradeId = df.tradeId.replace({np.nan: None})
+
+    return df
 
 def submit_trades_from_file(fn: str):
     print(f"\n{fn}")
@@ -169,8 +140,7 @@ def submit_trades_from_file(fn: str):
 
     for _, row in data.iterrows():
         create_trade_mutation = CreateTradeMutation(**row)
-        res = create_trade_mutation.execute(client)
-        print(res)
+        _ = create_trade_mutation.execute(client)
         print(".", end="", flush=True)
 
 

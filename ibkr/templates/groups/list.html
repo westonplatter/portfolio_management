@@ -1,0 +1,8 @@
+{% block content %}
+    <h2>Groups</h2>
+    <ul>
+        {% for group in groups %}
+            <li>{{ group.name }} - {{ group.trades_realized_pnl }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

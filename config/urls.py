@@ -17,6 +17,7 @@ urlpatterns = [
     # User management
     path("users/", include("portfolio_management.users.urls", namespace="users")),
     path("ingest/", include("ingest.urls", namespace="ingest")),
+    path("ibkr/", include("ibkr.urls", namespace="ibkr")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

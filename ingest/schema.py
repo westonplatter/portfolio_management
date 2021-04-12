@@ -1,3 +1,5 @@
+# from typing_extensions import Required
+# from _typeshed import FileDescriptor
 import graphene
 from graphene_django import DjangoObjectType
 
@@ -51,16 +53,62 @@ class Query(graphene.ObjectType):
 class TradeMutation(graphene.Mutation):
     class Arguments:
         transactionId = BigInt(required=True)
+        executedAt = graphene.DateTime(required=True)
+        # optional
+        tradeId = BigInt(required=False)
+        accountId = graphene.String(required=False)
+        assetCategory = graphene.String(required=False)
+        symbol = graphene.String(required=False)
+        underlyingSymbol = graphene.String(required=False)
+        openCloseIndicator = graphene.String(required=False)
+        fifoPnlRealized = graphene.Float(required=False)
+        fxPnl = graphene.Float(required=False)
+        mtmPnl = graphene.Float(required=False)
+        buySell = graphene.String(required=False)
+        description = graphene.String(required=False)
+        expiry = graphene.DateTime(required=False)
+        strike = graphene.Float(required=False)
+        multiplier = graphene.Float(required=False)
 
     trade = graphene.Field(TradeType)
 
     @classmethod
-    def mutate(cls, root, info, transactionId):
-
-        print("\n-------------------\nhi")
-
-        defaults = {}
-        kwargs = {"transaction_id": transactionId}
+    def mutate(cls, root, info,
+        transactionId,
+        accountId=None,
+        assetCategory=None,
+        symbol=None,
+        underlyingSymbol=None,
+        openCloseIndicator=None,
+        fifoPnlRealized=None,
+        fxPnl=None,
+        mtmPnl=None,
+        buySell=None,
+        executedAt=None,
+        description=None,
+        tradeId=None,
+        expiry=None,
+        strike=None,
+        multiplier=None,
+    ):
+        defaults = dict(
+            account_id=accountId,
+            asset_category=assetCategory,
+            symbol=symbol,
+            underlying_symbol=underlyingSymbol,
+            open_close_indicator=openCloseIndicator,
+            fifo_pnl_realized=fifoPnlRealized,
+            fx_pnl=fxPnl,
+            mtm_pnl=mtmPnl,
+            buy_sell=buySell,
+            executed_at=executedAt,
+            description=description,
+            trade_id=tradeId,
+            expiry=expiry,
+            strike=strike,
+            multiplier=multiplier,
+        )
+        kwargs = dict(transaction_id=transactionId)
         trade, _ = Trade.objects.get_or_create(**kwargs, defaults=defaults)
         return TradeMutation(trade=trade)
 
