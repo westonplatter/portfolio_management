@@ -1,8 +1,24 @@
+{% extends "base.html" %}
+
 {% block content %}
     <h2>Groups</h2>
-    <ul>
-        {% for group in groups %}
-            <li>{{ group.name }} - {{ group.trades_realized_pnl }}</li>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>trades_realized_pnl</th>
+          <th>Active</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for group in object_list %}
+            <tr>
+              <td><a href="{% url 'ibkr:group-detail' pk=group.id%}">{{ group.name }}</a></td>
+              <td>{{ group.trades_realized_pnl }}</td>
+              <td>{{ group.active }}</td>
+            </tr>
         {% endfor %}
-    </ul>
+      </tbody>
+    </table>
 {% endblock %}

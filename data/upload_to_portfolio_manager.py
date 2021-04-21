@@ -113,15 +113,15 @@ def rename_columns(ddf) -> pd.DataFrame:
             "ibOrderID": "ibOrderId",
             "transactionID": "transactionId",
             "conid": "conId",
-            "dateTime": "executedAt"
+            "dateTime": "executedAt",
         }
     )
 
 
 def transform(df) -> pd.DataFrame:
-    df.executedAt = pd.to_datetime(df['executedAt']).dt.strftime('%Y-%m-%dT%H:%M%:%SZ')
+    df.executedAt = pd.to_datetime(df["executedAt"]).dt.strftime("%Y-%m-%dT%H:%M%:%SZ")
 
-    df.expiry = pd.to_datetime(df['expiry']).dt.strftime('%Y-%m-%dT%H:%M%:%SZ')
+    df.expiry = pd.to_datetime(df["expiry"]).dt.strftime("%Y-%m-%dT%H:%M%:%SZ")
     df.expiry = df.expiry.replace({np.nan: None})
 
     df.strike = df.strike.replace({np.nan: None})
@@ -130,9 +130,10 @@ def transform(df) -> pd.DataFrame:
 
     return df
 
+
 def submit_trades_from_file(fn: str):
     print(f"\n{fn}")
-    trades = pd.read_csv(fn) # static type import the data
+    trades = pd.read_csv(fn)  # static type import the data
     trades = rename_columns(trades)
     trades = transform(trades)
     fields_to_extract = list(CreateTradeMutation.schema()["properties"].keys())

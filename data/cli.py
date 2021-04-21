@@ -24,9 +24,11 @@ def core():
 
 #     download_trades()
 
+
 @core.command()
 def upload():
     from upload_to_portfolio_manager import execute
+
     execute()
 
 

@@ -25,3 +25,6 @@ graphene_django==2.15.0
 python_graphql_client==0.4.3
 pandas
 pydantic
+pandas
+numpy
+django-pandas

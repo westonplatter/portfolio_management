@@ -8,12 +8,15 @@ from ibkr.models import Trade, Contract
 from graphene.types import Scalar
 from graphql.language import ast
 from graphene.types.scalars import MIN_INT, MAX_INT
+
+
 class BigInt(Scalar):
     """
     BigInt is an extension of the regular Int field
         that supports Integers bigger than a signed
         32-bit integer.
     """
+
     @staticmethod
     def big_to_float(value):
         num = int(value)
@@ -32,11 +35,14 @@ class BigInt(Scalar):
                 return float(int(num))
             return num
 
+
 class TradeType(DjangoObjectType):
     transaction_id = graphene.Field(BigInt)
+
     class Meta:
         model = Trade
         fields = ("id", "transaction_id")
+
 
 class ContractType(DjangoObjectType):
     class Meta:
@@ -49,6 +55,7 @@ class Query(graphene.ObjectType):
 
     def resolve_trades(root, info):
         return Trade.objects.all()
+
 
 class TradeMutation(graphene.Mutation):
     class Arguments:
@@ -73,7 +80,10 @@ class TradeMutation(graphene.Mutation):
     trade = graphene.Field(TradeType)
 
     @classmethod
-    def mutate(cls, root, info,
+    def mutate(
+        cls,
+        root,
+        info,
         transactionId,
         accountId=None,
         assetCategory=None,
@@ -111,6 +121,7 @@ class TradeMutation(graphene.Mutation):
         kwargs = dict(transaction_id=transactionId)
         trade, _ = Trade.objects.get_or_create(**kwargs, defaults=defaults)
         return TradeMutation(trade=trade)
+
 
 class Mutation(graphene.ObjectType):
     create_or_get_trade = TradeMutation.Field()

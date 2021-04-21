@@ -13,6 +13,7 @@ urlpatterns = [
         "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
     ),
     # Django Admin, use {% url 'admin:index' %}
+    path("select2/", include("django_select2.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("portfolio_management.users.urls", namespace="users")),

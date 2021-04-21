@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Trades</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Symbol</th>
+          <th>Executed At</th>
+          <th>Groups</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for trade in object_list %}
+            <tr>
+              <td><a href="{% url 'ibkr:trade-detail' pk=trade.id %}">{{ trade.id }}</a></td>
+              <td>{{ trade.symbol }}</td>
+              <td>{{ trade.executed_at }}</td>
+              <td>{{ trade.group_names }}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

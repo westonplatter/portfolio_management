@@ -1,11 +1,14 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import reverse_related
+from django_pandas.io import read_frame
+import pandas as pd
 
 
 char_field_defaults = dict(max_length=255, null=True)
 int_field_defaults = dict(null=True)
 decimal_field_defaults = dict(max_digits=16, decimal_places=4, null=True)
+
 
 class BaseModelMixin:
     created_at = models.DateTimeField(auto_now_add=True)
@@ -60,23 +63,36 @@ class Trade(models.Model, BaseModelMixin):
     expiry = models.DateTimeField(null=True, blank=True, default=None)
     trade_id = models.BigIntegerField(**int_field_defaults)
 
+    #
+    # relationships
+    #
+    groups = models.ManyToManyField("Group", through="GroupTrade")
+
+    @property
+    def group_names(self):
+        return [x.name for x in self.groups.all()]
+
 
 class Group(models.Model, BaseModelMixin):
     name = models.CharField(**char_field_defaults)
+    active = models.BooleanField(default=True)
+    trades = models.ManyToManyField(Trade, through="GroupTrade")
 
     @property
-    def trades(self):
-        group_trades = GroupTrade.objects.filter(group_id=self.id).all()
-        trade_ids = [x.trade_id for x in group_trades]
-        return Trade.objects.filter(id__in=trade_ids)
+    def trades_all(self):
+        qs = self.trades.all().order_by("executed_at")
+        df = read_frame(qs)
+        df['fifo_pnl_realized_cumsum'] = df.fifo_pnl_realized.cumsum()
+        df['executed_at_json'] = df.executed_at.dt.strftime("%b %d, %Y, %-I:%M %p")
+        return df.to_json(orient="records")
 
     @property
     def trades_realized_pnl(self):
-        return sum([x.fifo_pnl_realized for x in self.trades])
+        return sum([x.fifo_pnl_realized for x in self.trades.all()])
 
     @property
     def trades_mtm_pnl(self):
-        return sum([x.mtm_pnl for x in self.trades])
+        return sum([x.mtm_pnl for x in self.trades.all()])
 
 
 class GroupTrade(models.Model, BaseModelMixin):
