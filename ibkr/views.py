@@ -13,7 +13,8 @@ class GroupListView(ListView):
     model = Group
     paginate_by = 100
     template_name = "groups/list.html"
-    ordering = ['active', 'name']
+    ordering = ["active", "name"]
+
 
 class GroupDetailView(DetailView, UpdateView):
     model = Group
@@ -21,19 +22,13 @@ class GroupDetailView(DetailView, UpdateView):
     form_class = GroupForm
     success_url = "/ibkr/groups/"
 
+
 class TradeListView(ListView):
     model = Trade
-    ordering = ['-executed_at']
+    ordering = ["-executed_at"]
     template_name = "trades/list.html"
     paginate_by = 100
-
-    def execute_query(self):
-        return Trade.objects.all().prefetch_related('group')
-
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["trades"] = Trade.objects.all()
-        return context
+    queryset = Trade.objects.prefetch_related("groups")
 
 
 class TradeDetailView(DetailView, UpdateView):

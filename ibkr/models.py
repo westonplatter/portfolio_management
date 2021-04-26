@@ -82,8 +82,8 @@ class Group(models.Model, BaseModelMixin):
     def trades_all(self):
         qs = self.trades.all().order_by("executed_at")
         df = read_frame(qs)
-        df['fifo_pnl_realized_cumsum'] = df.fifo_pnl_realized.cumsum()
-        df['executed_at_json'] = df.executed_at.dt.strftime("%b %d, %Y, %-I:%M %p")
+        df["fifo_pnl_realized_cumsum"] = df.fifo_pnl_realized.cumsum()
+        df["executed_at_json"] = df.executed_at.dt.strftime("%b %d, %Y, %-I:%M %p")
         return df.to_json(orient="records")
 
     @property
