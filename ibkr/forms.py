@@ -19,6 +19,9 @@ class TradeForm(forms.ModelForm):
         model = Trade
         fields = ["groups"]
 
+class TradeSearchForm(forms.ModelForm):
+    class Meta:
+        model = Trade
 
 class GroupForm(forms.ModelForm):
     class Meta:

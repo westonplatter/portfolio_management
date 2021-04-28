@@ -25,10 +25,20 @@ class GroupDetailView(DetailView, UpdateView):
 
 class TradeListView(ListView):
     model = Trade
-    ordering = ["-executed_at"]
     template_name = "trades/list.html"
     paginate_by = 100
-    queryset = Trade.objects.prefetch_related("groups")
+
+    def get_queryset(self):
+        qs = Trade.objects
+
+        symbol = self.request.GET.get('symbol', None)
+        if symbol:
+            qs = qs.filter(symbol__icontains=symbol)
+
+        qs = qs.prefetch_related("groups")
+        qs = qs.order_by("-executed_at")
+        return qs
+
 
 
 class TradeDetailView(DetailView, UpdateView):
