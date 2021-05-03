@@ -1,5 +1,6 @@
 import datetime
-from ibkr.models import Trade, Group
+
+from ibkr.models import Group, Trade
 
 
 def create_trade(_id):
