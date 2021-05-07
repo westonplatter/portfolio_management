@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% load humanize %}
+
+
 {% block content %}
     <h2>Groups</h2>
     <table class="table table-striped">
@@ -15,7 +18,7 @@
         {% for group in object_list %}
             <tr>
               <td><a href="{% url 'ibkr:group-detail' pk=group.id%}">{{ group.name }}</a></td>
-              <td>{{ group.trades_realized_pnl }}</td>
+              <td>{{ group.trades_realized_pnl|intcomma }}</td>
               <td>{{ group.active }}</td>
             </tr>
         {% endfor %}

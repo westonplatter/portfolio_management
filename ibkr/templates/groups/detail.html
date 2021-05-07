@@ -2,8 +2,6 @@
 
 {% load ibkr_tags %}
 
-
-
 {% block content %}
   <h2>Group Trades</h2>
 
@@ -19,6 +17,7 @@
       <tr>
         <th>Id</th>
         <th>Symbol</th>
+        <th>Underlying Symbol</th>
         <th>Executed At</th>
         <th>Fifo PnL Realized</th>
         <th>(CumSum) Fifo PnL Realized</th>
@@ -30,6 +29,7 @@
           <tr>
             <td><a href="{% url 'ibkr:trade-detail' pk=trade.id %}">{{ trade.id }}</a></td>
             <td>{{ trade.symbol }}</td>
+            <td>{{ trade.underlying_symbol }}</td>
             <td>{{ trade.executed_at_json }}</td>
             <td>{{ trade.fifo_pnl_realized }}</td>
             <td>{{ trade.fifo_pnl_realized_cumsum }}</td>
