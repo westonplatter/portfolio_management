@@ -1,13 +1,12 @@
 # from typing_extensions import Required
 # from _typeshed import FileDescriptor
 import graphene
-from graphene_django import DjangoObjectType
-
-from ibkr.models import Trade, Contract
-
 from graphene.types import Scalar
+from graphene.types.scalars import MAX_INT, MIN_INT
+from graphene_django import DjangoObjectType
 from graphql.language import ast
-from graphene.types.scalars import MIN_INT, MAX_INT
+
+from ibkr.models import Contract, Trade
 
 
 class BigInt(Scalar):

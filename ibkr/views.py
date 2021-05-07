@@ -1,12 +1,23 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
+import django_filters
+import django_filters.views
+from django.shortcuts import redirect, render
+from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView
 
-from ibkr.models import Group, Trade
-from django.shortcuts import redirect, render
-from django.views.generic import ListView, DetailView
-
 from ibkr.forms import GroupForm, TradeForm
+from ibkr.models import Group, Trade
+
+
+class TradeListFilterSet(django_filters.FilterSet):
+    class Meta:
+        model = Trade
+        fields = {
+            'symbol': ['icontains'],
+            'underlying_symbol': ['icontains'],
+            'description': ['icontains'],
+        }
 
 
 class GroupListView(ListView):
@@ -23,12 +34,17 @@ class GroupDetailView(DetailView, UpdateView):
     success_url = "/ibkr/groups/"
 
 
-class TradeListView(ListView):
+class TradeListView(django_filters.views.FilterView):
     model = Trade
-    ordering = ["-executed_at"]
     template_name = "trades/list.html"
     paginate_by = 100
-    queryset = Trade.objects.prefetch_related("groups")
+    filterset_class = TradeListFilterSet
+    ordering = ["-executed_at"]
+
+    def get_queryset(self):
+        qs = super().get_queryset() # to work with django-filters
+        qs = qs.prefetch_related("groups")
+        return qs
 
 
 class TradeDetailView(DetailView, UpdateView):

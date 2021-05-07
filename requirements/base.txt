@@ -28,3 +28,4 @@ pydantic
 pandas
 numpy
 django-pandas
+django-filter

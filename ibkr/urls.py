@@ -1,7 +1,6 @@
 from django.urls import path
 
-from ibkr.views import GroupListView, GroupDetailView
-from ibkr.views import TradeListView, TradeDetailView
+from ibkr.views import GroupDetailView, GroupListView, TradeDetailView, TradeListView
 
 app_name = "ibkr"
 

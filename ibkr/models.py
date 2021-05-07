@@ -1,9 +1,8 @@
+import pandas as pd
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import reverse_related
 from django_pandas.io import read_frame
-import pandas as pd
-
 
 char_field_defaults = dict(max_length=255, null=True)
 int_field_defaults = dict(null=True)
