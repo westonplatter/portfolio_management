@@ -4,7 +4,7 @@ import django_filters
 import django_filters.views
 from django.shortcuts import redirect, render
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, CreateView
 
 from ibkr.forms import GroupForm, TradeForm
 from ibkr.models import Group, Trade
@@ -16,6 +16,13 @@ class GroupListView(ListView):
     paginate_by = 100
     template_name = "groups/list.html"
     ordering = ["active", "name"]
+
+
+class GroupsCreateView(CreateView):
+    model = Group
+    fields = ['name']
+    template_name = 'groups/create.html'
+    success_url = "/ibkr/groups"
 
 
 class GroupDetailView(DetailView, UpdateView):
