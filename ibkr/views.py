@@ -8,16 +8,7 @@ from django.views.generic.edit import UpdateView
 
 from ibkr.forms import GroupForm, TradeForm
 from ibkr.models import Group, Trade
-
-
-class TradeListFilterSet(django_filters.FilterSet):
-    class Meta:
-        model = Trade
-        fields = {
-            'symbol': ['icontains'],
-            'underlying_symbol': ['icontains'],
-            'description': ['icontains'],
-        }
+from ibkr.filter_sets import TradeListFilterSet
 
 
 class GroupListView(ListView):

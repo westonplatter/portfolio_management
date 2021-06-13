@@ -54,7 +54,7 @@
       <tbody>
         {% for trade in object_list %}
             <tr>
-              <td><a href="{% url 'ibkr:trade-detail' pk=trade.id %}">{{ trade.id }}</a></td>
+              <td><a href="{% url 'ibkr:trade-detail' pk=trade.id %}" target="_blank">{{ trade.id }}</a></td>
               <td>{{ trade.symbol }}</td>
               <td>{{ trade.underlying_symbol }}</td>
               <td>{{ trade.executed_at }}</td>
