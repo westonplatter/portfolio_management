@@ -1,9 +1,8 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
-from django.db.models.fields import reverse_related
 from django_pandas.io import read_frame
-import pandas as pd
 
+from portfolio_management.users.models import User
 
 char_field_defaults = dict(max_length=255, null=True)
 int_field_defaults = dict(null=True)
@@ -20,6 +19,12 @@ class Contract(models.Model, BaseModelMixin):
 
 
 class Trade(models.Model, BaseModelMixin):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
     transaction_id = models.BigIntegerField(**int_field_defaults)
     account_id = models.CharField(**char_field_defaults)
 
@@ -74,17 +79,23 @@ class Trade(models.Model, BaseModelMixin):
 
 
 class Group(models.Model, BaseModelMixin):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+    )
     name = models.CharField(**char_field_defaults)
     active = models.BooleanField(default=True)
     trades = models.ManyToManyField(Trade, through="GroupTrade")
 
     @property
     def trades_all(self):
-        qs = self.trades.all().order_by("executed_at")
+        qs = self.trades.all().order_by("-executed_at")
         df = read_frame(qs)
-        df["fifo_pnl_realized_cumsum"] = df.fifo_pnl_realized.cumsum()
+        df["fifo_pnl_realized_cumsum"] = df.fifo_pnl_realized[::-1].cumsum()
         df["executed_at_json"] = df.executed_at.dt.strftime("%b %d, %Y, %-I:%M %p")
-        return df.to_json(orient="records")
+        records = df.to_json(orient="records")
+        return records
 
     @property
     def trades_realized_pnl(self):

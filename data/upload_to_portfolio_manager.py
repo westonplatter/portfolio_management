@@ -1,11 +1,10 @@
-import re
 import glob
 from typing import Optional
 
-from python_graphql_client import GraphqlClient
-from pydantic import BaseModel
-import pandas as pd
 import numpy as np
+import pandas as pd
+from pydantic import BaseModel
+from python_graphql_client import GraphqlClient
 
 GRAPHQL_ENDPOINT = "http://localhost:8000/ingest/graphql"
 

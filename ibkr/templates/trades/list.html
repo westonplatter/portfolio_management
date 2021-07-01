@@ -1,15 +1,28 @@
 {% extends "base.html" %}
 
+{% load ibkr_tags %}
+
 {% block content %}
     <h2>Trades</h2>
+
+    <div class="row">
+      <div class="col-md-12">
+        <form action="" method="get">
+          {{ filter.form.as_p }}
+          <input type="submit" />
+        </form>
+      </div>
+    </div>
 
     <!--Pagination-->
     <div class="container p-4">
       <div class="pagination justify-content-center">
         <span class="step-links">
           {% if page_obj.has_previous %}
-              <a href="?page=1">&laquo; first</a>
-              <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            <a href="?{% param_replace page=1 %}">First</a>
+            {% if page_obj.previous_page_number != 1 %}
+              <a href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+            {% endif %}
           {% endif %}
 
             <span class="current">
@@ -17,8 +30,10 @@
             </span>
 
           {% if page_obj.has_next %}
-              <a href="?page={{ page_obj.next_page_number }}">next</a>
-              <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% if page_obj.next_page_number != paginator.num_pages %}
+              <a href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+            {% endif %}
+            <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
           {% endif %}
         </span>
       </div>
@@ -39,7 +54,7 @@
       <tbody>
         {% for trade in object_list %}
             <tr>
-              <td><a href="{% url 'ibkr:trade-detail' pk=trade.id %}">{{ trade.id }}</a></td>
+              <td><a href="{% url 'ibkr:trade-detail' pk=trade.id %}" target="_blank">{{ trade.id }}</a></td>
               <td>{{ trade.symbol }}</td>
               <td>{{ trade.underlying_symbol }}</td>
               <td>{{ trade.executed_at }}</td>

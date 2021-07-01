@@ -1,6 +1,6 @@
 from django import forms
 
-from ibkr.models import Trade, Group
+from ibkr.models import Group, Trade
 
 
 class GroupNameChoiceField(forms.ModelMultipleChoiceField):
