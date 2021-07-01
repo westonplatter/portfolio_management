@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load humanize %}
 {% load ibkr_tags %}
 
 {% block content %}
@@ -31,8 +32,8 @@
             <td>{{ trade.symbol }}</td>
             <td>{{ trade.underlying_symbol }}</td>
             <td>{{ trade.executed_at_json }}</td>
-            <td>{{ trade.fifo_pnl_realized }}</td>
-            <td>{{ trade.fifo_pnl_realized_cumsum }}</td>
+            <td>{{ trade.fifo_pnl_realized|floatformat:2|intcomma }}</td>
+            <td>{{ trade.fifo_pnl_realized_cumsum|floatformat:2|intcomma }}</td>
           </tr>
       {% endfor %}
     </tbody>

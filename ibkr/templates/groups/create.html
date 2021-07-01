@@ -1,4 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br/>
+
+<h2>New Group</h2>
+
+<br/>
+
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Save">
 </form>
+
+{% endblock content %}
