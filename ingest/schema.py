@@ -1,10 +1,9 @@
-# from typing_extensions import Required
-# from _typeshed import FileDescriptor
 import graphene
 from graphene.types import Scalar
 from graphene.types.scalars import MAX_INT, MIN_INT
 from graphene_django import DjangoObjectType
 from graphql.language import ast
+import graphql
 
 from ibkr.models import Contract, Trade
 
@@ -51,10 +50,21 @@ class ContractType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     trades = graphene.List(TradeType)
+    lastTradeDate = graphene.String(accountId=graphene.String())
 
     def resolve_trades(root, info):
         return Trade.objects.all()
 
+    def resolve_lastTradeDate(root, info, accountId=None):
+        qs = Trade.objects
+        if accountId:
+            qs = qs.filter(account_id=accountId)
+
+        if qs.count() == 0:
+            return None
+
+        latest_trade = qs.latest('executed_at')
+        return latest_trade.executed_at.strftime("%Y-%m-%d")
 
 class TradeMutation(graphene.Mutation):
     class Arguments:

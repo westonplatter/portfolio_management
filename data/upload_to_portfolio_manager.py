@@ -1,5 +1,8 @@
+import datetime
 import glob
-from typing import Optional
+from typing import Optional, Dict
+
+from click.core import Option
 
 import numpy as np
 import pandas as pd
@@ -12,17 +15,34 @@ client = GraphqlClient(endpoint=GRAPHQL_ENDPOINT)
 
 
 class Mutation(BaseModel):
+    def gen_variables(self):
+        return self.dict()
+
     def execute(self, client):
         query = self.gen_mutation()
         variables = self.gen_variables()
         return client.execute(query=query, variables=variables)
 
-    def gen_variables(self):
-        return self.dict()
-
 
 class Query(BaseModel):
-    pass
+    def gen_variables(self) -> Dict:
+        return {}
+
+    def execute(self, client):
+        query = self.gen_query()
+        variables = self.gen_variables()
+        return client.execute(query=query, variables=variables)
+
+
+class GetLastTradeDate(Query):
+    accountId: Optional[str]
+
+    def gen_query(self) -> str:
+        return """
+        query x ($accountId: String) {
+            lastTradeDate(accountId: $accountId)
+        }
+        """
 
 
 class CreateTradeMutation(Mutation):
@@ -129,22 +149,44 @@ def transform(df) -> pd.DataFrame:
 
     return df
 
+def get_latest_trade_executed_at_per_account_id(graphql_client, account_id: str) -> datetime.date:
+    query = GetLastTradeDate(accountId=account_id)
+    data = query.execute(graphql_client)['data']
+    latest_trade_executed_at = data["lastTradeDate"]
+    year, month, day = [int(x) for x in latest_trade_executed_at.split("-")]
+    latest_trade_executed_at: datetime.date = datetime.date(year, month, day)
+    min_date: datetime.date = latest_trade_executed_at - datetime.timedelta(days=2)
+    return min_date
 
-def submit_trades_from_file(fn: str):
+
+def submit_trades_from_file(fn: str, import_all: bool):
     print(f"\n{fn}")
-    trades = pd.read_csv(fn)  # static type import the data
-    trades = rename_columns(trades)
-    trades = transform(trades)
+    df = pd.read_csv(fn)  # static type import the data
+    df = rename_columns(df)
+    df = transform(df)
     fields_to_extract = list(CreateTradeMutation.schema()["properties"].keys())
-    data = trades[fields_to_extract]
+    df = df[fields_to_extract].copy()
 
-    for _, row in data.iterrows():
+    if not import_all:
+        # get min date
+        account_id = df['accountId'].values[0]
+        min_date = get_latest_trade_executed_at_per_account_id(client, account_id)
+
+        # filter down data to exclude all trades before min_date
+        df["executed_at_date"] = pd.to_datetime(df["executedAt"]).dt.date
+        df = df.query("@min_date <= executed_at_date").copy()
+
+        print(f"AccountId={account_id}: importing {len(df)} new trades")
+
+
+    for _, row in df.iterrows():
         create_trade_mutation = CreateTradeMutation(**row)
         _ = create_trade_mutation.execute(client)
         print(".", end="", flush=True)
 
 
-def execute():
+def execute(import_all):
     for fn in glob.glob("*.csv"):
         # if re.search("[0-9]_trades.csv", fn):
-        submit_trades_from_file(fn)
+
+        submit_trades_from_file(fn, import_all)
