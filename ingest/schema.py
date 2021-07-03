@@ -111,6 +111,7 @@ class TradeMutation(graphene.Mutation):
         multiplier=None,
     ):
         defaults = dict(
+            user_id=1, # TODO(weston) tie to user by Authentication/API key
             account_id=accountId,
             asset_category=assetCategory,
             symbol=symbol,
