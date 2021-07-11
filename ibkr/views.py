@@ -3,9 +3,11 @@ from typing import T
 import django_filters
 import django_filters.views
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models.query import QuerySet
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
+from django.urls import reverse_lazy
 
 from ibkr.filter_sets import TradeListFilterSet
 from ibkr.forms import GroupForm, TradeForm
@@ -28,7 +30,11 @@ class GroupsCreateView(LoginRequiredMixin, CreateView):
     model = Group
     fields = ["name"]
     template_name = "groups/create.html"
-    success_url = "/ibkr/groups"
+    success_url = reverse_lazy("ibkr:group-list")
+
+    def form_valid(self, form) -> HttpResponse:
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 class GroupDetailView(LoginRequiredMixin, DetailView, UpdateView):
