@@ -7,6 +7,8 @@ import graphql
 
 from ibkr.models import Contract, Trade
 
+DEFAULT_USER_ID = 1
+
 
 class BigInt(Scalar):
     """
@@ -111,7 +113,7 @@ class TradeMutation(graphene.Mutation):
         multiplier=None,
     ):
         defaults = dict(
-            user_id=1, # TODO(weston) tie to user by Authentication/API key
+            user_id=DEFAULT_USER_ID,
             account_id=accountId,
             asset_category=assetCategory,
             symbol=symbol,
