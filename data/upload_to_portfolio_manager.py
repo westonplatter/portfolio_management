@@ -160,7 +160,7 @@ def get_latest_trade_executed_at_per_account_id(graphql_client, account_id: str)
 
 
 def submit_trades_from_file(fn: str, import_all: bool):
-    print(f"\n{fn}")
+    print(f"\nSubmitting trades for {fn}")
     df = pd.read_csv(fn)  # static type import the data
     df = rename_columns(df)
     df = transform(df)
@@ -187,6 +187,4 @@ def submit_trades_from_file(fn: str, import_all: bool):
 
 def execute(import_all):
     for fn in glob.glob("*.csv"):
-        # if re.search("[0-9]_trades.csv", fn):
-
         submit_trades_from_file(fn, import_all)

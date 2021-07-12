@@ -1,10 +1,10 @@
-from typing import T
+from typing import Any, Dict, T
 
 import django_filters
 import django_filters.views
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models.query import QuerySet
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
@@ -41,7 +41,12 @@ class GroupDetailView(LoginRequiredMixin, DetailView, UpdateView):
     model = Group
     template_name = "groups/detail.html"
     form_class = GroupForm
-    success_url = "/ibkr/groups/"
+    success_url = reverse_lazy("ibkr:group-list")
+
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        # kwargs['account_ids'] = ["U123"]
+        return kwargs
 
 
 class TradeListView(LoginRequiredMixin, django_filters.views.FilterView):
@@ -61,5 +66,5 @@ class TradeListView(LoginRequiredMixin, django_filters.views.FilterView):
 class TradeDetailView(LoginRequiredMixin, DetailView, UpdateView):
     model = Trade
     template_name = "trades/detail.html"
-    success_url = "/ibkr/trades/"
+    success_url = reverse_lazy("ibkr:trade-list")
     form_class = TradeForm

@@ -85,6 +85,7 @@ class Group(models.Model, BaseModelMixin):
         null=True,
     )
     name = models.CharField(**char_field_defaults)
+    account_id = models.CharField(**char_field_defaults)
     active = models.BooleanField(default=True)
     trades = models.ManyToManyField(Trade, through="GroupTrade")
 

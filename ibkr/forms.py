@@ -23,4 +23,4 @@ class TradeForm(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ["name", "active"]
+        fields = ["name", "active", "account_id"]
