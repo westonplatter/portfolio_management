@@ -1,4 +1,7 @@
 import click
+import glob
+import os
+from shutil import copyfile
 
 
 @click.group()
@@ -13,6 +16,25 @@ def upload(all):
 
     import_all: bool = all != "0"
     execute(import_all)
+
+
+@core.command()
+def copy():
+    csv_files = []
+    for file in glob.glob("*.csv"):
+        csv_files.append(file)
+
+    for file in csv_files:
+        print(f"Deleting = {file}")
+        os.remove(file)
+
+    lsc_data_path = "/Users/vifo/work/lsc/loganstreetcap/data/*closed_trades*"
+
+    for file in glob.glob(lsc_data_path):
+        print(f"Copying {file}")
+        fn = file.split("/")[-1]
+        dest = f"/Users/vifo/work/lsc/portfolio_management/data/{fn}"
+        copyfile(file, dest)
 
 
 if __name__ == "__main__":
