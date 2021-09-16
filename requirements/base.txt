@@ -29,4 +29,4 @@ pandas
 numpy
 django-pandas
 django-filter
-django-extensions
+click
