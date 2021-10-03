@@ -65,8 +65,9 @@ class Query(graphene.ObjectType):
         if qs.count() == 0:
             return None
 
-        latest_trade = qs.latest('executed_at')
+        latest_trade = qs.latest("executed_at")
         return latest_trade.executed_at.strftime("%Y-%m-%d")
+
 
 class TradeMutation(graphene.Mutation):
     class Arguments:

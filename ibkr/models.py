@@ -85,6 +85,7 @@ class Group(models.Model, BaseModelMixin):
         null=True,
     )
     name = models.CharField(**char_field_defaults)
+    account_id = models.CharField(**char_field_defaults)
     active = models.BooleanField(default=True)
     trades = models.ManyToManyField(Trade, through="GroupTrade")
 
@@ -93,7 +94,8 @@ class Group(models.Model, BaseModelMixin):
         qs = self.trades.all().order_by("-executed_at")
         df = read_frame(qs)
         df["fifo_pnl_realized_cumsum"] = df.fifo_pnl_realized[::-1].cumsum()
-        df["executed_at_json"] = df.executed_at.dt.strftime("%b %d, %Y, %-I:%M %p")
+        if len(df.index) > 0:
+            df["executed_at_json"] = df.executed_at.dt.strftime("%b %d, %Y, %-I:%M %p")
         records = df.to_json(orient="records")
         return records
 

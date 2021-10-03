@@ -1,28 +1,12 @@
 import click
+import glob
+import os
+from shutil import copyfile
 
 
 @click.group()
 def core():
     pass
-
-
-# @core.command()
-# @click.option("--time-period", default="weekly", help="weekly or annual.")
-# @click.option("--account-type", default="real", help="real or paper")
-# def download(time_period: str, account_type: str):
-#     print(f"downloading: time_period={time_period}, account_type={account_type}")
-#     from download_trades import execute
-
-#     execute(time_period, account_type)
-
-
-# @core.command()
-# def tws_download_trades():
-#     # @TODO(weston) download trades from TWS api
-#     print(f"TODO tws_download")
-#     from tws_client import download_trades
-
-#     download_trades()
 
 
 @core.command()
@@ -32,6 +16,25 @@ def upload(all):
 
     import_all: bool = all != "0"
     execute(import_all)
+
+
+@core.command()
+def copy():
+    csv_files = []
+    for file in glob.glob("*.csv"):
+        csv_files.append(file)
+
+    for file in csv_files:
+        print(f"Deleting = {file}")
+        os.remove(file)
+
+    lsc_data_path = "/Users/vifo/work/lsc/loganstreetcap/data/*closed_trades*"
+
+    for file in glob.glob(lsc_data_path):
+        print(f"Copying {file}")
+        fn = file.split("/")[-1]
+        dest = f"/Users/vifo/work/lsc/portfolio_management/data/{fn}"
+        copyfile(file, dest)
 
 
 if __name__ == "__main__":

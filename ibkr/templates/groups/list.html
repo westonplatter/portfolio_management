@@ -5,15 +5,29 @@
 
 {% block content %}
     <h2>Groups</h2>
+
+    <div class="row">
+      <div class="col-md-12">
+        <form action="" method="get">
+          {{ filter.form.as_p }}
+          <input type="submit" />
+        </form>
+      </div>
+    </div>
+
+    <p>
+      <a href="{% url 'ibkr:group-create' %}">New Group</a>
+    </p>
+
     <br/>
-    <p><a href="{% url 'ibkr:group-create' %}">New Group</a></p>
-    <br/>
+
     <table class="table table-striped">
       <thead>
         <tr>
           <th>Name</th>
           <th>trades_realized_pnl</th>
           <th>Active</th>
+          <th>AccountId</th>
         </tr>
       </thead>
 
@@ -23,6 +37,7 @@
               <td><a href="{% url 'ibkr:group-detail' pk=group.id%}">{{ group.name }}</a></td>
               <td>{{ group.trades_realized_pnl|floatformat:2|intcomma }}</td>
               <td>{{ group.active }}</td>
+              <td>{{ group.account_id }}</td>
             </tr>
         {% endfor %}
       </tbody>
