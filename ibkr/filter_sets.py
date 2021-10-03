@@ -1,7 +1,7 @@
 import django_filters
 from django_filters import FilterSet
 
-from ibkr.models import Trade
+from ibkr.models import Group, Trade
 
 
 class TradeListFilterSet(FilterSet):
@@ -22,4 +22,18 @@ class TradeListFilterSet(FilterSet):
             "symbol": ["icontains"],
             "underlying_symbol": ["icontains"],
             "description": ["icontains"],
+        }
+
+class GroupListFilterSet(FilterSet):
+
+    # TODO should be authentication specific
+    choices = [
+        (x["account_id"], x["account_id"])
+        for x in Trade.objects.values("account_id").distinct()
+    ]
+    account_id = django_filters.ChoiceFilter(choices=choices, label="Account Alias")
+    class Meta:
+        model = Group
+        fields = {
+            "name": ["icontains"],
         }

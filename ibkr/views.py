@@ -9,22 +9,23 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
 
-from ibkr.filter_sets import TradeListFilterSet
+from ibkr.filter_sets import GroupListFilterSet, TradeListFilterSet
 from ibkr.forms import GroupForm, TradeForm
 from ibkr.models import Group, Trade
 
 
-class GroupListView(LoginRequiredMixin, ListView):
 def get_distinct_account_ids(user_id: int):
     trades = Trade.objects.filter(user_id=user_id).values("account_id").distinct()
     account_ids = [x["account_id"] for x in trades]
     return account_ids
 
 
+class GroupListView(LoginRequiredMixin, django_filters.views.FilterView):
     model = Group
     paginate_by = 100
     template_name = "groups/list.html"
     ordering = ["-active", "name"]
+    filterset_class = GroupListFilterSet
 
     def get_queryset(self) -> QuerySet[T]:
         qs = super().get_queryset()
