@@ -32,6 +32,7 @@ class GroupListView(LoginRequiredMixin, django_filters.views.FilterView):
         qs = qs.filter(user=self.request.user)
         return qs
 
+
 class GroupsCreateView(LoginRequiredMixin, CreateView):
     model = Group
     template_name = "groups/create.html"
@@ -40,7 +41,7 @@ class GroupsCreateView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self) -> Dict[str, Any]:
         kwargs = super().get_form_kwargs()
-        kwargs['account_id_choices'] = get_distinct_account_ids(self.request.user.id)
+        kwargs["account_id_choices"] = get_distinct_account_ids(self.request.user.id)
         return kwargs
 
     def form_valid(self, form) -> HttpResponse:
@@ -56,7 +57,7 @@ class GroupDetailView(LoginRequiredMixin, DetailView, UpdateView):
 
     def get_form_kwargs(self) -> Dict[str, Any]:
         kwargs = super().get_form_kwargs()
-        kwargs['account_id_choices'] = get_distinct_account_ids(self.request.user.id)
+        kwargs["account_id_choices"] = get_distinct_account_ids(self.request.user.id)
         return kwargs
 
 

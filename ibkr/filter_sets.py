@@ -24,6 +24,7 @@ class TradeListFilterSet(FilterSet):
             "description": ["icontains"],
         }
 
+
 class GroupListFilterSet(FilterSet):
 
     # TODO should be authentication specific
@@ -32,6 +33,7 @@ class GroupListFilterSet(FilterSet):
         for x in Trade.objects.values("account_id").distinct()
     ]
     account_id = django_filters.ChoiceFilter(choices=choices, label="Account Alias")
+
     class Meta:
         model = Group
         fields = {
