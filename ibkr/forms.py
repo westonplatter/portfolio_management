@@ -1,4 +1,5 @@
 from django import forms
+from django.db import models
 
 from ibkr.models import Group, Trade
 
@@ -24,3 +25,12 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ["name", "active", "account_id"]
+
+    def __init__(self, *args, **kwargs):
+        ids = kwargs.pop("account_id_choices")
+        ACCOUNT_ID_CHOICES = [("", "")]
+        ACCOUNT_ID_CHOICES.extend([(x, x) for x in ids])
+
+        super(GroupForm, self).__init__(*args, **kwargs)
+
+        self.fields["account_id"] = forms.ChoiceField(choices=ACCOUNT_ID_CHOICES)

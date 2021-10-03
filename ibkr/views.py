@@ -15,6 +15,12 @@ from ibkr.models import Group, Trade
 
 
 class GroupListView(LoginRequiredMixin, ListView):
+def get_distinct_account_ids(user_id: int):
+    trades = Trade.objects.filter(user_id=user_id).values("account_id").distinct()
+    account_ids = [x["account_id"] for x in trades]
+    return account_ids
+
+
     model = Group
     paginate_by = 100
     template_name = "groups/list.html"
@@ -25,12 +31,16 @@ class GroupListView(LoginRequiredMixin, ListView):
         qs = qs.filter(user=self.request.user)
         return qs
 
-
 class GroupsCreateView(LoginRequiredMixin, CreateView):
     model = Group
-    fields = ["name"]
     template_name = "groups/create.html"
+    form_class = GroupForm
     success_url = reverse_lazy("ibkr:group-list")
+
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs['account_id_choices'] = get_distinct_account_ids(self.request.user.id)
+        return kwargs
 
     def form_valid(self, form) -> HttpResponse:
         form.instance.user = self.request.user
@@ -45,7 +55,7 @@ class GroupDetailView(LoginRequiredMixin, DetailView, UpdateView):
 
     def get_form_kwargs(self) -> Dict[str, Any]:
         kwargs = super().get_form_kwargs()
-        # kwargs['account_ids'] = ["U123"]
+        kwargs['account_id_choices'] = get_distinct_account_ids(self.request.user.id)
         return kwargs
 
 

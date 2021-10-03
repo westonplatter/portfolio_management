@@ -23,6 +23,7 @@
         <th>Executed At</th>
         <th>Fifo PnL Realized</th>
         <th>(CumSum) Fifo PnL Realized</th>
+        <th>Account</th>
       </tr>
     </thead>
 
@@ -35,6 +36,7 @@
             <td>{{ trade.executed_at_json }}</td>
             <td>{{ trade.fifo_pnl_realized|floatformat:2|intcomma }}</td>
             <td>{{ trade.fifo_pnl_realized_cumsum|floatformat:2|intcomma }}</td>
+            <td>{{ trade.account_id }}</td>
           </tr>
       {% endfor %}
     </tbody>
