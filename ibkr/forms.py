@@ -10,15 +10,23 @@ class GroupNameChoiceField(forms.ModelMultipleChoiceField):
 
 
 class TradeForm(forms.ModelForm):
-    groups = GroupNameChoiceField(
-        queryset=Group.objects.filter(active=True).all().order_by("name"),
-        required=False,
-        label="",
-    )
-
     class Meta:
         model = Trade
         fields = ["groups"]
+
+    def __init__(self, *args, **kwargs):
+        ids = kwargs.pop("group_id_choices")
+        account_active_groups = Group.objects.filter(id__in=ids, active=True).order_by(
+            "name"
+        )
+
+        super(TradeForm, self).__init__(*args, **kwargs)
+
+        self.fields["groups"] = GroupNameChoiceField(
+            queryset=account_active_groups,
+            required=False,
+            label="",
+        )
 
 
 class GroupForm(forms.ModelForm):
@@ -30,7 +38,5 @@ class GroupForm(forms.ModelForm):
         ids = kwargs.pop("account_id_choices")
         ACCOUNT_ID_CHOICES = [("", "")]
         ACCOUNT_ID_CHOICES.extend([(x, x) for x in ids])
-
         super(GroupForm, self).__init__(*args, **kwargs)
-
         self.fields["account_id"] = forms.ChoiceField(choices=ACCOUNT_ID_CHOICES)

@@ -1,7 +1,8 @@
-import click
 import glob
 import os
 from shutil import copyfile
+
+import click
 
 
 @click.group()

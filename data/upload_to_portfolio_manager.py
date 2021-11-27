@@ -1,8 +1,6 @@
 import datetime
 import glob
-from typing import Optional, Dict
-
-from click.core import Option
+from typing import Dict, Optional
 
 import numpy as np
 import pandas as pd

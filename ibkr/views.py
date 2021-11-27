@@ -1,13 +1,13 @@
-from typing import Any, Dict, T
+from typing import Any, Dict, List, T
 
 import django_filters
 import django_filters.views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
-from django.urls import reverse_lazy
 
 from ibkr.filter_sets import GroupListFilterSet, TradeListFilterSet
 from ibkr.forms import GroupForm, TradeForm
@@ -24,7 +24,7 @@ class GroupListView(LoginRequiredMixin, django_filters.views.FilterView):
     model = Group
     paginate_by = 100
     template_name = "groups/list.html"
-    ordering = ["-active", "name"]
+    ordering = ["account_id", "-active", "name"]
     filterset_class = GroupListFilterSet
 
     def get_queryset(self) -> QuerySet[T]:
@@ -80,3 +80,12 @@ class TradeDetailView(LoginRequiredMixin, DetailView, UpdateView):
     template_name = "trades/detail.html"
     success_url = reverse_lazy("ibkr:trade-list")
     form_class = TradeForm
+
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs["group_id_choices"] = self.possible_group_ids(self.object.account_id)
+        return kwargs
+
+    @staticmethod
+    def possible_group_ids(account_id: str) -> List[str]:
+        return Group.objects.filter(account_id=account_id).values("id")

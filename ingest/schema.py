@@ -1,9 +1,9 @@
 import graphene
+import graphql
 from graphene.types import Scalar
 from graphene.types.scalars import MAX_INT, MIN_INT
 from graphene_django import DjangoObjectType
 from graphql.language import ast
-import graphql
 
 from ibkr.models import Contract, Trade
 
