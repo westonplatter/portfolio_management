@@ -1,6 +1,6 @@
 {
   "name": "portfolio_management",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {},
   "devDependencies": {
     "autoprefixer": "^9.4.7",
@@ -13,7 +13,8 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.0.2",
     "gulp-uglify-es": "^1.0.4",
-    "pixrem": "^5.0.0"
+    "pixrem": "^5.0.0",
+    "standard-version": "^9.3.2"
   },
   "engines": {
     "node": ">=8"
@@ -23,6 +24,7 @@
   ],
   "scripts": {
     "dev": "gulp",
-    "build": "gulp generate-assets"
+    "build": "gulp generate-assets",
+    "release": "standard-version"
   }
 }
