@@ -1,5 +1,4 @@
 from django import forms
-from django.db import models
 
 from ibkr.models import Group, Trade
 

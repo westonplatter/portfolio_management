@@ -1,39 +1,12 @@
+from typing import Optional
+
 import graphene
-import graphql
-from graphene.types import Scalar
-from graphene.types.scalars import MAX_INT, MIN_INT
 from graphene_django import DjangoObjectType
-from graphql.language import ast
 
 from ibkr.models import Contract, Trade
+from ingest.schema_types import BigInt
 
 DEFAULT_USER_ID = 1
-
-
-class BigInt(Scalar):
-    """
-    BigInt is an extension of the regular Int field
-        that supports Integers bigger than a signed
-        32-bit integer.
-    """
-
-    @staticmethod
-    def big_to_float(value):
-        num = int(value)
-        if num > MAX_INT or num < MIN_INT:
-            return float(int(num))
-        return num
-
-    serialize = big_to_float
-    parse_value = big_to_float
-
-    @staticmethod
-    def parse_literal(node):
-        if isinstance(node, ast.IntValue):
-            num = int(node.value)
-            if num > MAX_INT or num < MIN_INT:
-                return float(int(num))
-            return num
 
 
 class TradeType(DjangoObjectType):
@@ -41,7 +14,9 @@ class TradeType(DjangoObjectType):
 
     class Meta:
         model = Trade
-        fields = ("id", "transaction_id")
+        fields = ("id", "transaction_id", "account_id")
+        # TODO create a serializer to send down trades and the groups they are apart of
+        # for Main Fund, I want to be able to see all trades in the Crude Long Carry Position.
 
 
 class ContractType(DjangoObjectType):
@@ -52,12 +27,20 @@ class ContractType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     trades = graphene.List(TradeType)
+
+    trades_by_account_id = graphene.List(
+        TradeType, accountId=graphene.String(required=True)
+    )
+
     lastTradeDate = graphene.String(accountId=graphene.String())
 
     def resolve_trades(root, info):
         return Trade.objects.all()
 
-    def resolve_lastTradeDate(root, info, accountId=None):
+    def resolve_trades_by_account_id(root, info, accountId: str):
+        return Trade.objects.filter(account_id=accountId)
+
+    def resolve_lastTradeDate(root, info, accountId: Optional[str] = None):
         qs = Trade.objects
         if accountId:
             qs = qs.filter(account_id=accountId)
