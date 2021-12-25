@@ -1,12 +1,35 @@
 from typing import Optional
 
 import graphene
+from django_restql.mixins import DynamicFieldsMixin
 from graphene_django import DjangoObjectType
+from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
 
-from ibkr.models import Contract, Trade
+from ibkr.models import Contract, Group, GroupTrade, Trade
 from ingest.schema_types import BigInt
 
 DEFAULT_USER_ID = 1
+
+
+class GroupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = "__all__"
+
+
+class TradeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    groups = GroupSerializer(many=True, read_only=True, fields=["id", "name"])
+
+    class Meta:
+        model = Trade
+        fields = "__all__"
+
+
+class GroupType(DjangoObjectType):
+    class Meta:
+        model = Group
+        fields = "__all__"
 
 
 class TradeType(DjangoObjectType):
@@ -14,9 +37,7 @@ class TradeType(DjangoObjectType):
 
     class Meta:
         model = Trade
-        fields = ("id", "transaction_id", "account_id")
-        # TODO create a serializer to send down trades and the groups they are apart of
-        # for Main Fund, I want to be able to see all trades in the Crude Long Carry Position.
+        fields = "__all__"
 
 
 class ContractType(DjangoObjectType):
@@ -29,7 +50,9 @@ class Query(graphene.ObjectType):
     trades = graphene.List(TradeType)
 
     trades_by_account_id = graphene.List(
-        TradeType, accountId=graphene.String(required=True)
+        TradeType,
+        accountId=graphene.String(required=True),
+        limit=graphene.Int(required=False),
     )
 
     lastTradeDate = graphene.String(accountId=graphene.String())
@@ -37,8 +60,11 @@ class Query(graphene.ObjectType):
     def resolve_trades(root, info):
         return Trade.objects.all()
 
-    def resolve_trades_by_account_id(root, info, accountId: str):
-        return Trade.objects.filter(account_id=accountId)
+    def resolve_trades_by_account_id(root, info, accountId: str, limit: int = None):
+        qs = Trade.objects.filter(account_id=accountId).prefetch_related("groups")
+        if limit is not None and int(limit) > 0:
+            qs = qs[0:limit]
+        return qs
 
     def resolve_lastTradeDate(root, info, accountId: Optional[str] = None):
         qs = Trade.objects

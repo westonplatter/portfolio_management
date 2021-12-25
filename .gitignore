@@ -273,3 +273,4 @@ portfolio_management/media/
 
 .env
 data
+notebooks/.ipynb_checkpoints
