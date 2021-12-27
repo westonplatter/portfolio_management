@@ -169,15 +169,15 @@ def submit_trades_from_file(fn: str, import_all: bool):
     df = df[fields_to_extract].copy()
 
     # if not import_all:
-    #     # get min date
-    #     account_id = df['accountId'].values[0]
-    #     min_date = get_latest_trade_executed_at_per_account_id(client, account_id)
+        # # get min date
+        # account_id = df['accountId'].values[0]
+        # min_date = get_latest_trade_executed_at_per_account_id(client, account_id)
 
-    #     # filter down data to exclude all trades before min_date
-    #     df["executed_at_date"] = pd.to_datetime(df["executedAt"]).dt.date
-    #     df = df.query("@min_date <= executed_at_date").copy()
+        # # filter down data to exclude all trades before min_date
+        # df["executed_at_date"] = pd.to_datetime(df["executedAt"]).dt.date
+        # df = df.query("@min_date <= executed_at_date").copy()
 
-    #     print(f"AccountId={account_id}: importing {len(df)} new trades")
+        # print(f"AccountId={account_id}: importing {len(df)} new trades")
 
     for _, row in df.iterrows():
         create_trade_mutation = CreateTradeMutation(**row)
