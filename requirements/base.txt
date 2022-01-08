@@ -21,12 +21,17 @@ djangorestframework==3.12.2  # https://github.com/encode/django-rest-framework
 django-cors-headers==3.7.0 # https://github.com/adamchainz/django-cors-headers
 
 # added
-graphene_django==2.15.0
-python_graphql_client==0.4.3
-pandas
-pydantic
-pandas
-numpy==1.18.0
+click
 django-pandas
 django-filter
-click
+django_restql
+graphene_django==2.15.0
+graphene-django-extras
+numpy==1.18.0
+pandas
+python_graphql_client==0.4.3
+pydantic
+
+
+
+

@@ -1,39 +1,35 @@
-import graphene
-import graphql
-from graphene.types import Scalar
-from graphene.types.scalars import MAX_INT, MIN_INT
-from graphene_django import DjangoObjectType
-from graphql.language import ast
+from typing import Optional
 
-from ibkr.models import Contract, Trade
+import graphene
+from django_restql.mixins import DynamicFieldsMixin
+from graphene_django import DjangoObjectType
+from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
+
+from ibkr.models import Contract, Group, GroupTrade, Trade
+from ingest.schema_types import BigInt
 
 DEFAULT_USER_ID = 1
 
 
-class BigInt(Scalar):
-    """
-    BigInt is an extension of the regular Int field
-        that supports Integers bigger than a signed
-        32-bit integer.
-    """
+class GroupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = "__all__"
 
-    @staticmethod
-    def big_to_float(value):
-        num = int(value)
-        if num > MAX_INT or num < MIN_INT:
-            return float(int(num))
-        return num
 
-    serialize = big_to_float
-    parse_value = big_to_float
+class TradeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    groups = GroupSerializer(many=True, read_only=True, fields=["id", "name"])
 
-    @staticmethod
-    def parse_literal(node):
-        if isinstance(node, ast.IntValue):
-            num = int(node.value)
-            if num > MAX_INT or num < MIN_INT:
-                return float(int(num))
-            return num
+    class Meta:
+        model = Trade
+        fields = "__all__"
+
+
+class GroupType(DjangoObjectType):
+    class Meta:
+        model = Group
+        fields = "__all__"
 
 
 class TradeType(DjangoObjectType):
@@ -41,7 +37,7 @@ class TradeType(DjangoObjectType):
 
     class Meta:
         model = Trade
-        fields = ("id", "transaction_id")
+        fields = "__all__"
 
 
 class ContractType(DjangoObjectType):
@@ -52,12 +48,25 @@ class ContractType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     trades = graphene.List(TradeType)
+
+    trades_by_account_id = graphene.List(
+        TradeType,
+        accountId=graphene.String(required=True),
+        limit=graphene.Int(required=False),
+    )
+
     lastTradeDate = graphene.String(accountId=graphene.String())
 
     def resolve_trades(root, info):
         return Trade.objects.all()
 
-    def resolve_lastTradeDate(root, info, accountId=None):
+    def resolve_trades_by_account_id(root, info, accountId: str, limit: int = None):
+        qs = Trade.objects.filter(account_id=accountId).prefetch_related("groups")
+        if limit is not None and int(limit) > 0:
+            qs = qs[0:limit]
+        return qs
+
+    def resolve_lastTradeDate(root, info, accountId: Optional[str] = None):
         qs = Trade.objects
         if accountId:
             qs = qs.filter(account_id=accountId)
