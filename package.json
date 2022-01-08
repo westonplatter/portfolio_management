@@ -13,8 +13,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.0.2",
     "gulp-uglify-es": "^1.0.4",
-    "pixrem": "^5.0.0",
-    "standard-version": "^9.3.2"
+    "pixrem": "^5.0.0"
   },
   "engines": {
     "node": ">=8"
@@ -24,7 +23,6 @@
   ],
   "scripts": {
     "dev": "gulp",
-    "build": "gulp generate-assets",
-    "release": "standard-version"
+    "build": "gulp generate-assets"
   }
 }
