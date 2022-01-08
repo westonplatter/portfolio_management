@@ -24,3 +24,4 @@ dependencies:
     - ipykernel
     - import-ipynb
     - mlflow
+    - "django-environ"
