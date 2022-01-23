@@ -11,11 +11,11 @@ def core():
 
 
 @core.command()
-@click.option("--all", default="0", help="Import ALL trades?")
+@click.option("--all", type=bool, default=True, help="Import all trades?")
 def upload(all):
     from upload_to_portfolio_manager import execute
 
-    import_all: bool = all != "0"
+    import_all: bool = all
     execute(import_all)
 
 
@@ -29,12 +29,13 @@ def copy():
         print(f"Deleting = {file}")
         os.remove(file)
 
-    lsc_data_path = "/Users/vifo/work/lsc/loganstreetcap/data/*closed_trades*"
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    lsc_data_path = dir_path + "../../loganstreetcap/data/*closed_trades*"
 
     for file in glob.glob(lsc_data_path):
         print(f"Copying {file}")
         fn = file.split("/")[-1]
-        dest = f"/Users/vifo/work/lsc/portfolio_management/data/{fn}"
+        dest = f"{dir_path}/{fn}"
         copyfile(file, dest)
 
 
