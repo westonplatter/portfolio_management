@@ -31,7 +31,3 @@ numpy==1.18.0
 pandas
 python_graphql_client==0.4.3
 pydantic
-
-
-
-
