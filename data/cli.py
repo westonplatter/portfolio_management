@@ -30,7 +30,7 @@ def copy():
         os.remove(file)
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    lsc_data_path = dir_path + "../../loganstreetcap/data/*closed_trades*"
+    lsc_data_path = dir_path + "/../../finx-ib-reports/data/*close_trades*"
 
     for file in glob.glob(lsc_data_path):
         print(f"Copying {file}")
