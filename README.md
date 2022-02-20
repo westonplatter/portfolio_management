@@ -1,3 +1,5 @@
+# Repo moved to https://github.com/westonplatter/finx-pm
+
 # portfolio management
 See trade history and manage positions.
 
